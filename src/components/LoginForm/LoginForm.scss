@@ -1,0 +1,13 @@
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  width: 380px;
+  max-width: 80vw;
+
+  color: rgba(255, 255, 255, 0.9);
+  padding-bottom: 75px;
+  z-index: 1;
+}

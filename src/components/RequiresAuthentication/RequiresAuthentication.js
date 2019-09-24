@@ -17,10 +17,13 @@ export default ComposedComponent => {
       isAuthenticated: false
     };
 
-    render = () => {
+    componentDidMount = () => {
       if (!this.props.isAuthenticated) {
         this.props.navigateToLogin();
       }
+    };
+
+    render = () => {
       return <ComposedComponent {...this.props} />;
     };
   }

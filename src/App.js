@@ -10,7 +10,8 @@ import { Router, Route, browserHistory } from "react-router";
 
 import { syncHistoryWithStore } from "react-router-redux";
 
-import { LoginPage } from "./pages/LoginPage";
+// import { LoginPage } from "./pages/LoginPage";
+import { NoAuthPage } from "./pages/NoAuthPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { TeamsPage } from "./pages/TeamsPage";
@@ -60,8 +61,14 @@ class App extends Component {
         <PersistGate loading={<div>Loading</div>} persistor={persistor}>
           <Router history={history}>
             <Route path="/" component={CoreLayout}>
-              <Route path="login" component={LoginPage} />
-              <Route path="register" component={RegisterPage} />
+              <Route
+                path="login"
+                component={props => <NoAuthPage {...props} form="login" />}
+              />
+              <Route
+                path="register"
+                component={props => <NoAuthPage {...props} form="register" />}
+              />
               <Route component={RequiresAuthentication(MainNavigation)}>
                 <Route path="dashboard" component={DashboardPage} />
                 <Route path="teams" component={TeamsPage} />

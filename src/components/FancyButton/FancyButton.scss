@@ -1,0 +1,58 @@
+.fancy-button {
+  position: relative;
+  overflow: hidden !important;
+  transition: all 0.3s ease-in-out;
+  z-index: 10;
+}
+
+.fancy-button::before {
+  content: "";
+  width: 0%;
+  height: 100%;
+  display: block;
+  background: #00bd4c;
+  position: absolute;
+  transform: skewX(-20deg);
+  left: -10%;
+  opacity: 1;
+  top: 0;
+  z-index: -12;
+  transition: all 0.7s cubic-bezier(0.77, 0, 0.175, 1);
+  box-shadow: 2px 0px 14px rgba(0, 0, 0, 0.6);
+}
+
+.fancy-button::after {
+  content: "";
+  width: 0%;
+  height: 100%;
+  display: block;
+  background: #80ffd3;
+  position: absolute;
+  transform: skewX(-20deg);
+  left: -10%;
+  opacity: 0;
+  top: 0;
+  z-index: -15;
+
+  transition: all 0.4s cubic-bezier(0.2, 0.95, 0.57, 0.99);
+  box-shadow: 2px 0px 14px rgba(0, 0, 0, 0.6);
+}
+
+.fancy-button:hover::before {
+  opacity: 1;
+  width: 116%;
+}
+
+.fancy-button:hover::after {
+  opacity: 1;
+  width: 120%;
+}
+
+.spinner-inline {
+  display: inline;
+  margin-right: 10px;
+
+  svg {
+    margin-bottom: -2px;
+  }
+}
