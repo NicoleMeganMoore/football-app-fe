@@ -1,0 +1,225 @@
+.login-register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+
+  background-image: url("../../images/stadium.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  .login-register-page-background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+
+    background: black;
+    opacity: 0.8;
+  }
+}
+
+.signup-signin-logo {
+  width: 60px;
+  height: 60px;
+}
+
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  width: 380px;
+  max-width: 80vw;
+
+  color: rgba(255, 255, 255, 0.9);
+  padding-bottom: 75px;
+  z-index: 1;
+}
+
+.signin-signup-input-container {
+  display: flex;
+  position: relative;
+  width: 100%;
+
+  .signin-signup-input {
+    display: block;
+    border-radius: 50px;
+    border: none;
+    width: 100%;
+    height: 50px;
+    padding: 0 20px 0 60px;
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 50px;
+    background: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    outline: none !important;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    &:hover,
+    &:focus {
+      background: rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .input-icon {
+    position: absolute;
+    top: 25px;
+    left: 28px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.signin-signup-button {
+  width: 100%;
+  height: 50px;
+  border-radius: 50px;
+  line-height: 50px;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 10px 0;
+  outline: none;
+  cursor: pointer;
+
+  background: linear-gradient(90deg, #60bf81 0%, #00bd4c 100%);
+}
+
+.signup-signin-link {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 5px;
+  cursor: pointer;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  &:active,
+  &:focus {
+    outline: none;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-animation: autofill 0s forwards;
+  animation: autofill 0s forwards;
+  font-size: 16px;
+}
+
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-animation: autofill 0s forwards;
+  animation: autofill-hover 0s forwards;
+  font-size: 16px;
+}
+
+@keyframes autofill {
+  100% {
+    background: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+  }
+}
+
+@-webkit-keyframes autofill {
+  100% {
+    background: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+  }
+}
+
+@keyframes autofill-hover {
+  100% {
+    background: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+  }
+}
+
+@-webkit-keyframes autofill-hover {
+  100% {
+    background: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+  }
+}
+
+// Sign in/Sign up Button
+.signin-signup-button {
+  position: relative;
+  overflow: hidden !important;
+  transition: all 0.3s ease-in-out;
+  z-index: 10;
+}
+.signin-signup-button::before {
+  content: "";
+  width: 0%;
+  height: 100%;
+  display: block;
+  background: #00bd4c;
+  position: absolute;
+  transform: skewX(-20deg);
+  left: -10%;
+  opacity: 1;
+  top: 0;
+  z-index: -12;
+  transition: all 0.7s cubic-bezier(0.77, 0, 0.175, 1);
+  box-shadow: 2px 0px 14px rgba(0, 0, 0, 0.6);
+}
+
+.signin-signup-button::after {
+  content: "";
+  width: 0%;
+  height: 100%;
+  display: block;
+  background: #80ffd3;
+  position: absolute;
+  transform: skewX(-20deg);
+  left: -10%;
+  opacity: 0;
+  top: 0;
+  z-index: -15;
+
+  transition: all 0.4s cubic-bezier(0.2, 0.95, 0.57, 0.99);
+  box-shadow: 2px 0px 14px rgba(0, 0, 0, 0.6);
+}
+.signin-signup-button:hover::before {
+  opacity: 1;
+  width: 116%;
+}
+.signin-signup-button:hover::after {
+  opacity: 1;
+  width: 120%;
+}
+
+.spinner-inline {
+  display: inline;
+  margin-right: 10px;
+
+  svg {
+    margin-bottom: -2px;
+  }
+}

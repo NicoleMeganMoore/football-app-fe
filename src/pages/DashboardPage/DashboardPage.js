@@ -1,10 +1,10 @@
 import React, { Component } from "react";
+import { signInUser, signOutUser } from "../../redux/modules/authentication";
+import { connect } from "react-redux";
+
 import "./DashboardPage.css";
 
-export class DashboardPage extends Component {
-  componentDidMount = () => {
-    console.log("DASHBOARD COMPONENT MOUNTED");
-  };
+class DashboardPage extends Component {
   render = () => {
     return (
       <div className="dashboard-page">
@@ -13,3 +13,13 @@ export class DashboardPage extends Component {
     );
   };
 }
+
+const mapStateToProps = state => ({});
+
+export default connect(
+  mapStateToProps,
+  {
+    signInUser,
+    signOutUser
+  }
+)(DashboardPage);

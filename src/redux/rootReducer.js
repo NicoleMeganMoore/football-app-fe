@@ -38,3 +38,6 @@ export default (state, action) => {
 
 export const getIsAuthenticated = state =>
   fromAuthentication.getIsAuthenticated(state.authentication);
+
+export const getIsSigningIn = state =>
+  fromAuthentication.getIsSigningIn(state.authentication);

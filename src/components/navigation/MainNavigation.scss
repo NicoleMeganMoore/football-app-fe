@@ -33,7 +33,7 @@
   }
 
   li {
-    margin: 0 1rem;
+    // margin: 0 1rem;
   }
 
   a {
@@ -43,5 +43,16 @@
     &:active {
       opacity: 0.7;
     }
+  }
+
+  .main-navigation__button {
+    background: transparent;
+    color: white;
+    border: none;
+    height: 40px;
+    font-size: 16px;
+    padding: 0 14px;
+    outline: none !important;
+    cursor: pointer;
   }
 }

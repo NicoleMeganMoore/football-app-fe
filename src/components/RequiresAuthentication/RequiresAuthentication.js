@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 
 import { getIsAuthenticated } from "../../redux/rootReducer";
 
+import { navigateToLogin } from "../../redux/modules/authentication";
+
 export default ComposedComponent => {
   class Authentication extends Component {
     static propTypes = {
@@ -15,17 +17,10 @@ export default ComposedComponent => {
       isAuthenticated: false
     };
 
-    componentDidMount = () => {
-      console.log("AUTHENTICATION COMPONENT MOUNTED");
-    };
-
     render = () => {
       if (!this.props.isAuthenticated) {
-        console.log("not authenticated..... redirecting");
-        // return <Redirect to="/" />;
-        return null;
+        this.props.navigateToLogin();
       }
-      console.log("AUTHENTICATED! RENDERING NAV COMPONENT NOW");
       return <ComposedComponent {...this.props} />;
     };
   }
@@ -36,6 +31,6 @@ export default ComposedComponent => {
 
   return connect(
     mapStateToProps,
-    {}
+    { navigateToLogin }
   )(Authentication);
 };

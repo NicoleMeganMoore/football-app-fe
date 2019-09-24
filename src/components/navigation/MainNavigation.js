@@ -1,13 +1,22 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 
+import { getIsAuthenticated } from "../../redux/rootReducer";
+import {
+  navigateToDashboard,
+  navigateToLogin,
+  signOutUser
+} from "../../redux/modules/authentication";
+
 import "./MainNavigation.scss";
 
-import { getIsAuthenticated } from "../../redux/rootReducer";
-
-import { navigateToDashboard } from "../../redux/modules/authentication";
-
 class MainNavigation extends Component {
+  componentDidMount = () => {
+    if (!this.props.isAuthenticated) {
+      this.props.navigateToLogin();
+    }
+  };
+
   render = () => {
     return (
       <Fragment>
@@ -18,19 +27,35 @@ class MainNavigation extends Component {
           <nav className="main-navigation__items">
             <ul>
               <li className="main-navigation__item">
-                <a onClick={this.props.navigateToDashboard}>Dashboard</a>
+                <button
+                  className="main-navigation__button"
+                  onClick={this.props.navigateToDashboard}
+                >
+                  Dashboard
+                </button>
               </li>
               <li className="main-navigation__item">
-                <a onClick={() => {}}>Teams</a>
+                <button className="main-navigation__button" onClick={() => {}}>
+                  Teams
+                </button>
               </li>
               <li className="main-navigation__item">
-                <a onClick={() => {}}>Players</a>
+                <button className="main-navigation__button" onClick={() => {}}>
+                  Players
+                </button>
               </li>
               <li className="main-navigation__item">
-                <a onClick={() => {}}>Profile</a>
+                <button className="main-navigation__button" onClick={() => {}}>
+                  Profile
+                </button>
               </li>
               <li className="main-navigation__item">
-                <a onClick={() => {}}>Logout</a>
+                <button
+                  className="main-navigation__button"
+                  onClick={this.props.signOutUser}
+                >
+                  Log Out
+                </button>
               </li>
             </ul>
           </nav>
@@ -52,5 +77,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { navigateToDashboard }
+  { navigateToDashboard, navigateToLogin, signOutUser }
 )(MainNavigation);
