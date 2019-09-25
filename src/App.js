@@ -6,7 +6,7 @@ import { configureStore } from "./redux/modules/store";
 import { PersistGate } from "redux-persist/lib/integration/react";
 
 // import axios from "axios";
-import { Router, Route, browserHistory } from "react-router";
+import { Router, Route, browserHistory, Redirect } from "react-router";
 
 import { syncHistoryWithStore } from "react-router-redux";
 
@@ -58,6 +58,7 @@ class App extends Component {
       <Provider store={store}>
         <PersistGate loading={<div>Loading</div>} persistor={persistor}>
           <Router history={history}>
+            <Redirect from="/" to="/login" />
             <Route path="/" component={CoreLayout}>
               <Route
                 path="login"
