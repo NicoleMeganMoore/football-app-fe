@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { signInUser, signOutUser } from "../../redux/modules/authentication";
 import { connect } from "react-redux";
 
 import { MdPerson, MdLock } from "react-icons/md";
@@ -7,8 +6,7 @@ import { GiAmericanFootballHelmet } from "react-icons/gi";
 
 import { FancyButton } from "../FancyButton";
 
-import { getIsCreatingUser } from "../../redux/rootReducer";
-import { createUser } from "../../redux/modules/authentication";
+import { createUser, signInUser } from "../../redux/modules/authentication";
 
 import {
   navigateToDashboard,
@@ -30,7 +28,9 @@ class RegisterForm extends Component {
     passwordError: ""
   };
 
-  registerUser = () => {
+  registerUser = async () => {
+    this.setState({ isCreatingUserAndAuthenticating: true });
+
     const {
       firstNameInput,
       lastNameInput,
@@ -38,16 +38,23 @@ class RegisterForm extends Component {
       passwordInput
     } = this.state;
 
-    this.props
-      .createUser(firstNameInput, lastNameInput, emailInput, passwordInput)
-      .then(() => {
-        this.props.navigateToDashboard();
-      })
-      .catch(errorMessage => {
-        if (errorMessage) {
-          this.setState({ error: errorMessage });
-        }
-      });
+    try {
+      await this.props.createUser(
+        firstNameInput,
+        lastNameInput,
+        emailInput,
+        passwordInput
+      );
+      await this.props.signInUser(emailInput, passwordInput);
+      this.props.navigateToDashboard();
+    } catch (err) {
+      if (err) {
+        this.setState({
+          error: err,
+          isCreatingUserAndAuthenticating: false
+        });
+      }
+    }
   };
 
   firstNameError = firstName => {
@@ -254,7 +261,7 @@ class RegisterForm extends Component {
 
         <FancyButton
           className="signin-signup-button"
-          loading={this.props.isCreatingUser}
+          loading={this.state.isCreatingUserAndAuthenticating}
         >
           Sign Up
         </FancyButton>
@@ -272,16 +279,13 @@ class RegisterForm extends Component {
   };
 }
 
-const mapStateToProps = state => ({
-  isCreatingUser: getIsCreatingUser(state)
-});
+const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
   {
     navigateToDashboard,
     navigateToLogin,
-    signOutUser,
     signInUser,
     createUser
   }

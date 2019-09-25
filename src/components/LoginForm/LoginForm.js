@@ -39,9 +39,14 @@ class LoginForm extends Component {
       return;
     }
     const { emailInput, passwordInput } = this.state;
-    this.props.signInUser(emailInput, passwordInput).then(() => {
-      this.props.navigateToDashboard();
-    });
+    this.props
+      .signInUser(emailInput, passwordInput)
+      .then(() => {
+        this.props.navigateToDashboard();
+      })
+      .catch(errorMessage => {
+        this.setState({ error: errorMessage });
+      });
     return false;
   };
 
@@ -60,6 +65,10 @@ class LoginForm extends Component {
       >
         <GiAmericanFootballHelmet className="signup-signin-logo" />
         <h2>Log In</h2>
+
+        {this.state.error && (
+          <div className="signin-error-message">{this.state.error}</div>
+        )}
 
         <div className="signin-signup-input-container">
           <input

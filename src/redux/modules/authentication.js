@@ -21,6 +21,8 @@ export const NAVIGATE_TO_LOGIN = "NAVIGATE_TO_LOGIN";
 
 export const CLEAR_TOKEN = "CLEAR_TOKEN";
 
+const GENERAL_ERROR_MESSAGE = "Something went wrong, please try again.";
+
 export const signInUser = (email, password) => async (dispatch, getState) => {
   dispatch({ type: SIGN_IN_USER, payload: { email, password } });
 
@@ -49,13 +51,16 @@ export const signInUser = (email, password) => async (dispatch, getState) => {
       JSON.stringify(requestBody)
     );
 
-    return dispatch({
+    dispatch({
       type: SIGN_IN_USER_SUCCESS,
       payload: _.get(response, "data.data.login.token")
     });
+    return Promise.resolve();
   } catch (err) {
-    dispatch({ type: "SIGN_IN_USER_FAILURE" });
-    throw err;
+    const errorMessage =
+      _.get(err, "response.data.errors[0].message") || GENERAL_ERROR_MESSAGE;
+    dispatch({ type: SIGN_IN_USER_FAILURE });
+    return Promise.reject(errorMessage);
   }
 };
 
@@ -127,7 +132,7 @@ export const createUser = (
     return Promise.resolve();
   } catch (err) {
     dispatch({ type: CREATE_USER_FAILURE });
-    return Promise.reject();
+    return Promise.reject(GENERAL_ERROR_MESSAGE);
   }
 };
 
