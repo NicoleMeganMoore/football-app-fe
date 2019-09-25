@@ -19,7 +19,9 @@ import "./LoginForm.scss";
 class LoginForm extends Component {
   state = {
     emailInput: "",
-    passwordInput: ""
+    passwordInput: "",
+    emailError: "",
+    passwordError: ""
   };
 
   componentDidMount = () => {
@@ -34,11 +36,27 @@ class LoginForm extends Component {
     }
   };
 
+  getEmailError = email => {
+    if (email.trim().length === 0) {
+      return "Email is required.";
+    }
+    return undefined;
+  };
+
+  getPasswordError = password => {
+    if (password.length === 0) {
+      return "Password is required.";
+    }
+    return undefined;
+  };
+
   loginUser = () => {
-    if (this.shouldLoginButtonBeDisabled()) {
+    const { emailInput, passwordInput, emailError, passwordError } = this.state;
+
+    if (emailError || passwordError) {
       return;
     }
-    const { emailInput, passwordInput } = this.state;
+
     this.props
       .signInUser(emailInput, passwordInput)
       .then(() => {
@@ -50,11 +68,15 @@ class LoginForm extends Component {
     return false;
   };
 
-  shouldLoginButtonBeDisabled = () =>
-    this.state.emailInput.trim().length === 0 ||
-    this.state.passwordInput.trim().length === 0;
-
   render = () => {
+    const {
+      emailInput,
+      passwordInput,
+      emailError,
+      passwordError,
+      error
+    } = this.state;
+
     return (
       <form
         className="login-form-container"
@@ -66,9 +88,7 @@ class LoginForm extends Component {
         <GiAmericanFootballHelmet className="signup-signin-logo" />
         <h2>Log In</h2>
 
-        {this.state.error && (
-          <div className="signin-error-message">{this.state.error}</div>
-        )}
+        {error && <div className="signin-error-message">{error}</div>}
 
         <div className="signin-signup-input-container">
           <input
@@ -76,11 +96,19 @@ class LoginForm extends Component {
             id="login-email-input"
             className="signin-signup-input"
             type="text"
-            value={this.state.emailInput}
+            value={emailInput}
             placeholder="email"
-            onChange={e => this.setState({ emailInput: e.target.value })}
+            onChange={e =>
+              this.setState({
+                emailInput: e.target.value,
+                emailError: this.getEmailError(e.target.value)
+              })
+            }
           />
           <MdPerson className="input-icon" />
+          {emailError && (
+            <div className="input-validation-error">{emailError}</div>
+          )}
         </div>
 
         <div className="signin-signup-input-container">
@@ -90,10 +118,18 @@ class LoginForm extends Component {
             className="signin-signup-input"
             type="password"
             placeholder="password"
-            value={this.state.passwordInput}
-            onChange={e => this.setState({ passwordInput: e.target.value })}
+            value={passwordInput}
+            onChange={e =>
+              this.setState({
+                passwordInput: e.target.value,
+                passwordError: this.getPasswordError(e.target.value)
+              })
+            }
           />
           <MdLock className="input-icon" />
+          {passwordError && (
+            <div className="input-validation-error">{passwordError}</div>
+          )}
         </div>
 
         <FancyButton
