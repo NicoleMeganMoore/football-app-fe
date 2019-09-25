@@ -41,3 +41,6 @@ export const getIsAuthenticated = state =>
 
 export const getIsSigningIn = state =>
   fromAuthentication.getIsSigningIn(state.authentication);
+
+export const getIsCreatingUser = state =>
+  fromAuthentication.getIsCreatingUser(state.authentication);

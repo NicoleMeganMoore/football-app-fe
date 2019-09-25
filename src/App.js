@@ -10,9 +10,7 @@ import { Router, Route, browserHistory } from "react-router";
 
 import { syncHistoryWithStore } from "react-router-redux";
 
-// import { LoginPage } from "./pages/LoginPage";
 import { NoAuthPage } from "./pages/NoAuthPage";
-import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { TeamsPage } from "./pages/TeamsPage";
 import { PlayersPage } from "./pages/PlayersPage";

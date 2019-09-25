@@ -21,22 +21,23 @@ class NoAuthPage extends Component {
   };
 
   render = () => {
-    console.log("RENDERING NO AUTH PAGE");
     return (
       <div className="login-register-page">
         <div className="login-register-page-background-overlay" />
-        {
-          // <div className="noauth-header-container">
-          //   <div className="noauth-header-left-container"></div>
-          //   <div className="noauth-header-right-container">
-          //     <button className="signup-signin-link">Sign Up</button>
-          //     <button className="signup-signin-link">Log In</button>
-          //   </div>
-          // </div>
-        }
+        <div className="login-register-page-container">
+          {
+            // <div className="noauth-header-container">
+            //   <div className="noauth-header-left-container"></div>
+            //   <div className="noauth-header-right-container">
+            //     <button className="signup-signin-link">Sign Up</button>
+            //     <button className="signup-signin-link">Log In</button>
+            //   </div>
+            // </div>
+          }
 
-        {this.props.form === "login" && <LoginForm />}
-        {this.props.form === "register" && <RegisterForm />}
+          {this.props.form === "login" && <LoginForm />}
+          {this.props.form === "register" && <RegisterForm />}
+        </div>
       </div>
     );
   };

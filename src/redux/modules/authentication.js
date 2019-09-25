@@ -69,11 +69,6 @@ export const signOutUser = () => (dispatch, getState) => {
   dispatch(navigateToLogin());
 };
 
-const defaultState = {
-  token: null,
-  location: null
-};
-
 export const navigateToLogin = () => dispatch => {
   dispatch(push("/login"));
 };
@@ -92,10 +87,7 @@ export const createUser = (
   email,
   password
 ) => async dispatch => {
-  dispatch({
-    type: CREATE_USER,
-    payload: { firstName, lastName, email, password }
-  });
+  dispatch({ type: CREATE_USER });
 
   const axiosInstance = axios.create({
     headers: {
@@ -106,11 +98,12 @@ export const createUser = (
 
   const requestBody = {
     query: `
-      query {
-        createUser(userInput: { first_name: ${firstName}, last_name: ${lastName}, email: "${email}", password: "${password}"}) {
-          userId
-          token
-          tokenExpiration
+      mutation {
+        createUser(userInput: { first_name: "${firstName}", last_name: "${lastName}", email: "${email}", password: "${password}"}) {
+          id
+          first_name
+          last_name
+          email
         }
       }
     `
@@ -121,12 +114,28 @@ export const createUser = (
       "http://localhost:8080/graphql",
       JSON.stringify(requestBody)
     );
-    console.log(response);
-    dispatch({ type: CREATE_USER_SUCCESS, payload: response });
+
+    dispatch({
+      type: CREATE_USER_SUCCESS,
+      payload: _.get(response, "data.data.createUser")
+    });
+
+    if (_.get(response, "data.errors")) {
+      return Promise.reject(_.get(response, "data.errors[0].message"));
+    }
+
+    return Promise.resolve();
   } catch (err) {
     dispatch({ type: CREATE_USER_FAILURE });
-    console.log(err);
+    return Promise.reject();
   }
+};
+
+const defaultState = {
+  token: null,
+  location: null,
+  isSigningInUser: false,
+  isCreatingUser: false
 };
 
 export default (state = defaultState, action) => {
@@ -162,17 +171,27 @@ export default (state = defaultState, action) => {
       };
     }
 
-    // case CREATE_USER: {
-    //   return state;
-    // }
+    case CREATE_USER: {
+      return {
+        ...state,
+        isCreatingUser: true
+      };
+    }
 
-    // case CREATE_USER_SUCCESS: {
-    //   return state;
-    // }
+    case CREATE_USER_SUCCESS: {
+      return {
+        ...state,
+        isCreatingUser: false,
+        user: action.payload
+      };
+    }
 
-    // case CREATE_USER_FAILURE: {
-    //   return state;
-    // }
+    case CREATE_USER_FAILURE: {
+      return {
+        ...state,
+        isCreatingUser: false
+      };
+    }
 
     case CLEAR_TOKEN: {
       return {
@@ -206,3 +225,4 @@ export default (state = defaultState, action) => {
 
 export const getIsAuthenticated = state => state.isAuthenticated;
 export const getIsSigningIn = state => state.isSigningInUser;
+export const getIsCreatingUser = state => state.getIsCreatingUser;

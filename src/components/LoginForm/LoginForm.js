@@ -89,7 +89,6 @@ class LoginForm extends Component {
 
         <FancyButton
           className="signin-signup-button"
-          onClick={() => this.loginUser()}
           loading={this.props.isSigningIn}
         >
           Log In
