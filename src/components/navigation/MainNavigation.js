@@ -2,11 +2,12 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 
 import { getIsAuthenticated } from "../../redux/rootReducer";
+import { signOutUser } from "../../redux/modules/authentication";
+
 import {
   navigateToDashboard,
-  navigateToLogin,
-  signOutUser
-} from "../../redux/modules/authentication";
+  navigateToLogin
+} from "../../redux/modules/location";
 
 import "./MainNavigation.scss";
 

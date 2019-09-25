@@ -6,6 +6,7 @@ import { persistCombineReducers } from "redux-persist";
 import { routerReducer } from "react-router-redux";
 
 import authenticationReducer, * as fromAuthentication from "./modules/authentication";
+import locationReducer, * as fromLocation from "./modules/location";
 
 const appReducer = persistCombineReducers(
   {
@@ -15,6 +16,7 @@ const appReducer = persistCombineReducers(
   },
   {
     authentication: authenticationReducer,
+    location: locationReducer,
     router: routerReducer
   }
 );
@@ -29,7 +31,7 @@ export default (state, action) => {
     // eslint-disable-next-line no-param-reassign
     state = {
       ...state,
-      // location      : locationReducer,
+      location: locationReducer,
       authentication: undefined
     };
   }
@@ -44,3 +46,5 @@ export const getIsSigningIn = state =>
 
 export const getIsCreatingUser = state =>
   fromAuthentication.getIsCreatingUser(state.authentication);
+
+export const getLocation = state => fromLocation.getLocation(state.location);

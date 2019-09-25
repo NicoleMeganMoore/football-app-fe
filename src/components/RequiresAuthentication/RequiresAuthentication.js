@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import { getIsAuthenticated } from "../../redux/rootReducer";
 
-import { navigateToLogin } from "../../redux/modules/authentication";
+import { navigateToLogin } from "../../redux/modules/location";
 
 export default ComposedComponent => {
   class Authentication extends Component {

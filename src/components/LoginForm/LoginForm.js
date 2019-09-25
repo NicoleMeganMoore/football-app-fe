@@ -12,7 +12,7 @@ import { getIsSigningIn } from "../../redux/rootReducer";
 import {
   navigateToDashboard,
   navigateToRegister
-} from "../../redux/modules/authentication";
+} from "../../redux/modules/location";
 
 import "./LoginForm.scss";
 

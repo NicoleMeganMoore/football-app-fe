@@ -11,7 +11,7 @@ import { createUser, signInUser } from "../../redux/modules/authentication";
 import {
   navigateToDashboard,
   navigateToLogin
-} from "../../redux/modules/authentication";
+} from "../../redux/modules/location";
 
 import "./RegisterForm.scss";
 

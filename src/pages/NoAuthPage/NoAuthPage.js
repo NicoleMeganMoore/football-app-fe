@@ -11,7 +11,7 @@ import { signInUser, signOutUser } from "../../redux/modules/authentication";
 import {
   navigateToDashboard,
   navigateToRegister
-} from "../../redux/modules/authentication";
+} from "../../redux/modules/location";
 
 import "./NoAuthPage.scss";
 
