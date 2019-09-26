@@ -26,13 +26,14 @@ class NoAuthPage extends Component {
         <div className="login-register-page-background-overlay" />
         <div className="login-register-page-container">
           {
-            // <div className="noauth-header-container">
-            //   <div className="noauth-header-left-container"></div>
-            //   <div className="noauth-header-right-container">
-            //     <button className="signup-signin-link">Sign Up</button>
-            //     <button className="signup-signin-link">Log In</button>
-            //   </div>
-            // </div>
+            <div className="noauth-header-container">
+              <div className="noauth-header-left-container">
+                <button className="signup-signin-link">DraftWars</button>
+              </div>
+              <div className="noauth-header-right-container">
+                <button className="signup-signin-link"> </button>
+              </div>
+            </div>
           }
 
           {this.props.form === "login" && <LoginForm />}

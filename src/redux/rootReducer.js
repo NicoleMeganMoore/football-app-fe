@@ -48,3 +48,8 @@ export const getIsCreatingUser = state =>
   fromAuthentication.getIsCreatingUser(state.authentication);
 
 export const getLocation = state => fromLocation.getLocation(state.location);
+
+export const getActivePage = state => {
+  console.log(state);
+  return fromAuthentication.getActivePage(state.authentication);
+};

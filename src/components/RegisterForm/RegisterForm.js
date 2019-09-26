@@ -166,7 +166,8 @@ class RegisterForm extends Component {
             className="signin-signup-input"
             type="text"
             value={firstNameInput}
-            placeholder="first name"
+            name="first-name"
+            placeholder="First Name"
             onChange={e =>
               this.setState({
                 firstNameInput: e.target.value,
@@ -176,7 +177,12 @@ class RegisterForm extends Component {
           />
           <MdPerson className="input-icon" />
           {firstNameError && (
-            <div className="input-validation-error">{firstNameError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {firstNameError}
+            </div>
           )}
         </div>
 
@@ -186,8 +192,9 @@ class RegisterForm extends Component {
             id="register-last-name-input"
             className="signin-signup-input"
             type="text"
+            name="last-name"
             value={lastNameInput}
-            placeholder="last name"
+            placeholder="Last Name"
             onChange={e =>
               this.setState({
                 lastNameInput: e.target.value,
@@ -197,7 +204,12 @@ class RegisterForm extends Component {
           />
           <MdPerson className="input-icon" />
           {lastNameError && (
-            <div className="input-validation-error">{lastNameError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {lastNameError}
+            </div>
           )}
         </div>
 
@@ -207,8 +219,9 @@ class RegisterForm extends Component {
             id="register-email-input"
             className="signin-signup-input"
             type="text"
+            name="email"
             value={emailInput}
-            placeholder="email"
+            placeholder="Email"
             onChange={e =>
               this.setState({
                 emailInput: e.target.value,
@@ -218,7 +231,12 @@ class RegisterForm extends Component {
           />
           <MdPerson className="input-icon" />
           {emailError && (
-            <div className="input-validation-error">{emailError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {emailError}
+            </div>
           )}
         </div>
 
@@ -228,7 +246,8 @@ class RegisterForm extends Component {
             id="register-password-input"
             className="signin-signup-input"
             type="password"
-            placeholder="password"
+            name="password"
+            placeholder="Password"
             value={passwordInput}
             onChange={e =>
               this.setState({
@@ -239,7 +258,12 @@ class RegisterForm extends Component {
           />
           <MdLock className="input-icon" />
           {passwordError && (
-            <div className="input-validation-error">{passwordError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {passwordError}
+            </div>
           )}
         </div>
 
@@ -249,13 +273,19 @@ class RegisterForm extends Component {
             id="register-password-confirm-input"
             className="signin-signup-input"
             type="password"
-            placeholder="confirm password"
+            name="confirm-password"
+            placeholder="Confirm Password"
             value={passwordConfirmInput}
             onChange={this.onPasswordConfirmChange}
           />
           <MdLock className="input-icon" />
           {passwordConfirmError && (
-            <div className="input-validation-error">{passwordConfirmError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {passwordConfirmError}
+            </div>
           )}
         </div>
 

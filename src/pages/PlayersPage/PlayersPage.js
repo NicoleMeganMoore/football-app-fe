@@ -1,7 +1,15 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+
+import { setActivePage } from "../../redux/modules/authentication";
+
 import "./PlayersPage.css";
 
-export class PlayersPage extends Component {
+class PlayersPage extends Component {
+  componentDidMount = () => {
+    this.props.setActivePage("players");
+  };
+
   render = () => {
     return (
       <div className="players-page">
@@ -10,3 +18,12 @@ export class PlayersPage extends Component {
     );
   };
 }
+
+const mapStateToProps = state => ({});
+
+export default connect(
+  mapStateToProps,
+  {
+    setActivePage
+  }
+)(PlayersPage);

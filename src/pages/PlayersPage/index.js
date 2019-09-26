@@ -1,1 +1,1 @@
-export * from "./PlayersPage";
+export { default as PlayersPage } from "./PlayersPage";

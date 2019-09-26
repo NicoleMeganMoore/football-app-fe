@@ -13,8 +13,14 @@ body {
 .page-container {
   height: 100%;
   width: 100%;
-  padding: 4rem 2.5rem;
-  position: relative;
+  padding: 6.5rem 2.5rem;
+  position: absolute;
   box-sizing: border-box;
   overflow: auto;
+  background: lightgray;
+  transition: all 0.5s ease;
+
+  &:after {
+    right: 2000px;
+  }
 }

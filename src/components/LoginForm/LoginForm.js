@@ -1,6 +1,8 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { signInUser, signOutUser } from "../../redux/modules/authentication";
 import { connect } from "react-redux";
+import _ from "lodash";
 
 import { MdPerson, MdLock } from "react-icons/md";
 import { GiAmericanFootballHelmet } from "react-icons/gi";
@@ -17,6 +19,10 @@ import {
 import "./LoginForm.scss";
 
 class LoginForm extends Component {
+  static propTypes = {
+    isSigningIn: PropTypes.bool.isRequired
+  };
+
   state = {
     emailInput: "",
     passwordInput: "",
@@ -25,9 +31,17 @@ class LoginForm extends Component {
   };
 
   componentDidMount = () => {
-    const autoEmail = document.getElementById("login-email-input").autocomplete;
-    const autoPassword = document.getElementById("login-password-input")
-      .autocomplete;
+    const autoEmail = _.get(
+      document,
+      'getElementById("login-email-input").autocomplete',
+      ""
+    );
+    const autoPassword = _.get(
+      document,
+      'getElementById("login-password-input").autocomplete;',
+      ""
+    );
+
     if (autoEmail || autoPassword) {
       this.setState({
         emailInput: autoEmail,
@@ -107,7 +121,12 @@ class LoginForm extends Component {
           />
           <MdPerson className="input-icon" />
           {emailError && (
-            <div className="input-validation-error">{emailError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {emailError}
+            </div>
           )}
         </div>
 
@@ -128,12 +147,18 @@ class LoginForm extends Component {
           />
           <MdLock className="input-icon" />
           {passwordError && (
-            <div className="input-validation-error">{passwordError}</div>
+            <div
+              data-test="input-validation-error"
+              className="input-validation-error"
+            >
+              {passwordError}
+            </div>
           )}
         </div>
 
         <FancyButton
           className="signin-signup-button"
+          data-test="form-submit-button"
           loading={this.props.isSigningIn}
         >
           Log In

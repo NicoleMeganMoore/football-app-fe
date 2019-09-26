@@ -13,6 +13,18 @@ export const navigateToRegister = () => dispatch => {
   dispatch(push("/register"));
 };
 
+export const navigateToTeams = () => dispatch => {
+  dispatch(push("/teams"));
+};
+
+export const navigateToPlayers = () => dispatch => {
+  dispatch(push("/players"));
+};
+
+export const navigateToProfile = () => dispatch => {
+  dispatch(push("/profile"));
+};
+
 const defaultState = {
   location: null
 };
@@ -28,10 +40,10 @@ export default (state = defaultState, action) => {
     }
 
     case REHYDRATE: {
-      const incoming = action.payload ? action.payload.location : undefined;
-      if (incoming) {
-        return { ...state, ...incoming };
-      }
+      // const incoming = action.payload ? action.payload.location : undefined;
+      // if (incoming) {
+      //   return { ...state.location, ...incoming };
+      // }
       return state;
     }
 

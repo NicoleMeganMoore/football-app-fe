@@ -17,6 +17,8 @@ export const SIGN_OUT_USER = "SIGN_OUT_USER";
 
 export const CLEAR_TOKEN = "CLEAR_TOKEN";
 
+export const SET_ACTIVE_PAGE = "SET_ACTIVE_PAGE";
+
 const GENERAL_ERROR_MESSAGE = "Something went wrong, please try again.";
 
 export const signInUser = (email, password) => async (dispatch, getState) => {
@@ -120,11 +122,16 @@ export const createUser = (
   }
 };
 
+export const setActivePage = page => dispatch => {
+  dispatch({ type: SET_ACTIVE_PAGE, payload: page });
+};
+
 const defaultState = {
   token: null,
   location: null,
   isSigningInUser: false,
-  isCreatingUser: false
+  isCreatingUser: false,
+  activePage: "dashboard"
 };
 
 export default (state = defaultState, action) => {
@@ -189,12 +196,21 @@ export default (state = defaultState, action) => {
       };
     }
 
+    case SET_ACTIVE_PAGE: {
+      return {
+        ...state,
+        activePage: action.payload
+      };
+    }
+
     case REHYDRATE: {
       const incoming = action.payload
         ? action.payload.authentication
         : undefined;
+      console.log(incoming);
+
       if (incoming) {
-        return { ...state, ...incoming };
+        return { ...state.authentication, ...incoming };
       }
       return state;
     }
@@ -207,3 +223,7 @@ export default (state = defaultState, action) => {
 export const getIsAuthenticated = state => state.isAuthenticated;
 export const getIsSigningIn = state => state.isSigningInUser;
 export const getIsCreatingUser = state => state.getIsCreatingUser;
+export const getActivePage = state => {
+  console.log(state);
+  return state.activePage;
+};
