@@ -207,7 +207,6 @@ export default (state = defaultState, action) => {
       const incoming = action.payload
         ? action.payload.authentication
         : undefined;
-      console.log(incoming);
 
       if (incoming) {
         return { ...state.authentication, ...incoming };
@@ -223,7 +222,4 @@ export default (state = defaultState, action) => {
 export const getIsAuthenticated = state => state.isAuthenticated;
 export const getIsSigningIn = state => state.isSigningInUser;
 export const getIsCreatingUser = state => state.getIsCreatingUser;
-export const getActivePage = state => {
-  console.log(state);
-  return state.activePage;
-};
+export const getActivePage = state => state.activePage;

@@ -11,7 +11,6 @@ class TeamsPage extends Component {
   };
 
   render = () => {
-    console.log("TEAMS PAGE");
     return (
       <div className="teams-page">
         <h1>Teams Page</h1>

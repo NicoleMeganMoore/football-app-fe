@@ -35,7 +35,6 @@ class MainNavigation extends Component {
   };
 
   render = () => {
-    console.log(this.props.activePage);
     return (
       <Fragment>
         <header className="main-navigation">
