@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { setActivePage } from "../../redux/modules/authentication";
+import { setActivePage } from "../../redux/modules/location";
 
 import "./ProfilePage.css";
 
@@ -11,11 +11,7 @@ class ProfilePage extends Component {
   };
 
   render = () => {
-    return (
-      <div className="profile-page">
-        <h1>Profile Page</h1>
-      </div>
-    );
+    return <div className="profile-page">Profile</div>;
   };
 }
 

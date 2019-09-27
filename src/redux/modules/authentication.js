@@ -1,9 +1,12 @@
 import { REHYDRATE } from "redux-persist";
 
-import axios from "axios";
-import _ from "lodash";
+import _get from "lodash/get";
+
+import { graphqlRequest } from "../../js/graphqlService";
 
 import { navigateToLogin } from "./location";
+
+import * as fromRoot from "../rootReducer";
 
 export const CREATE_USER = "CREATE_USER";
 export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
@@ -17,53 +20,35 @@ export const SIGN_OUT_USER = "SIGN_OUT_USER";
 
 export const CLEAR_TOKEN = "CLEAR_TOKEN";
 
-export const SET_ACTIVE_PAGE = "SET_ACTIVE_PAGE";
-
-const GENERAL_ERROR_MESSAGE = "Something went wrong, please try again.";
-
-export const signInUser = (email, password) => async (dispatch, getState) => {
-  dispatch({ type: SIGN_IN_USER, payload: { email, password } });
-
-  try {
-    const axiosInstance = axios.create({
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    });
-
-    const requestBody = {
-      query: `
-        query {
-          login(email: "${email}", password: "${password}") {
-            userId
-            token
-            tokenExpiration
-          }
-        }
-      `
-    };
-
-    const response = await axiosInstance.post(
-      "http://localhost:8080/graphql",
-      JSON.stringify(requestBody)
-    );
-
-    dispatch({
-      type: SIGN_IN_USER_SUCCESS,
-      payload: _.get(response, "data.data.login.token")
-    });
-    return Promise.resolve();
-  } catch (err) {
-    const errorMessage =
-      _.get(err, "response.data.errors[0].message") || GENERAL_ERROR_MESSAGE;
-    dispatch({ type: SIGN_IN_USER_FAILURE });
-    return Promise.reject(errorMessage);
-  }
+export const clearToken = () => dispatch => {
+  dispatch({ type: CLEAR_TOKEN });
 };
 
-export const clearToken = () => (dispatch, getState) => {
-  dispatch({ type: CLEAR_TOKEN });
+export const signInUser = (email, password) => dispatch => {
+  dispatch({ type: SIGN_IN_USER, payload: { email, password } });
+
+  const query = `
+    query {
+      login(email: "${email}", password: "${password}") {
+        userId
+        token
+        tokenExpiration
+      }
+    }
+  `;
+
+  return graphqlRequest(query)
+    .then(response => {
+      dispatch({
+        type: SIGN_IN_USER_SUCCESS,
+        payload: _get(response, "login.token")
+      });
+      return Promise.resolve();
+    })
+    .catch(err => {
+      dispatch({ type: SIGN_IN_USER_FAILURE });
+      return Promise.reject(err);
+    });
 };
 
 export const signOutUser = () => (dispatch, getState) => {
@@ -77,61 +62,38 @@ export const createUser = (
   lastName,
   email,
   password
-) => async dispatch => {
+) => dispatch => {
   dispatch({ type: CREATE_USER });
 
-  const axiosInstance = axios.create({
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    }
-  });
-
-  const requestBody = {
-    query: `
-      mutation {
-        createUser(userInput: { first_name: "${firstName}", last_name: "${lastName}", email: "${email}", password: "${password}"}) {
-          id
-          first_name
-          last_name
-          email
-        }
+  const query = `
+    mutation {
+      createUser(userInput: { first_name: "${firstName}", last_name: "${lastName}", email: "${email}", password: "${password}"}) {
+        id
+        first_name
+        last_name
+        email
       }
-    `
-  };
-
-  try {
-    const response = await axiosInstance.post(
-      "http://localhost:8080/graphql",
-      JSON.stringify(requestBody)
-    );
-
-    dispatch({
-      type: CREATE_USER_SUCCESS,
-      payload: _.get(response, "data.data.createUser")
-    });
-
-    if (_.get(response, "data.errors")) {
-      return Promise.reject(_.get(response, "data.errors[0].message"));
     }
+  `;
 
-    return Promise.resolve();
-  } catch (err) {
-    dispatch({ type: CREATE_USER_FAILURE });
-    return Promise.reject(GENERAL_ERROR_MESSAGE);
-  }
-};
-
-export const setActivePage = page => dispatch => {
-  dispatch({ type: SET_ACTIVE_PAGE, payload: page });
+  return graphqlRequest(query)
+    .then(response => {
+      dispatch({
+        type: CREATE_USER_SUCCESS,
+        payload: _get(response, "createUser")
+      });
+      return Promise.resolve();
+    })
+    .catch(err => {
+      dispatch({ type: CREATE_USER_FAILURE });
+      return Promise.reject(err);
+    });
 };
 
 const defaultState = {
   token: null,
-  location: null,
   isSigningInUser: false,
-  isCreatingUser: false,
-  activePage: "dashboard"
+  isCreatingUser: false
 };
 
 export default (state = defaultState, action) => {
@@ -196,13 +158,6 @@ export default (state = defaultState, action) => {
       };
     }
 
-    case SET_ACTIVE_PAGE: {
-      return {
-        ...state,
-        activePage: action.payload
-      };
-    }
-
     case REHYDRATE: {
       const incoming = action.payload
         ? action.payload.authentication
@@ -219,7 +174,7 @@ export default (state = defaultState, action) => {
   }
 };
 
+export const getToken = state => state.token;
 export const getIsAuthenticated = state => state.isAuthenticated;
 export const getIsSigningIn = state => state.isSigningInUser;
 export const getIsCreatingUser = state => state.getIsCreatingUser;
-export const getActivePage = state => state.activePage;

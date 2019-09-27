@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { setActivePage } from "../../redux/modules/authentication";
+import { setActivePage } from "../../redux/modules/location";
 
 import "./TeamsPage.css";
 

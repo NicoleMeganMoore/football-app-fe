@@ -15,6 +15,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { TeamsPage } from "./pages/TeamsPage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { LeagueInvitePage } from "./pages/LeagueInvitePage";
 
 import MainNavigation from "./components/navigation/MainNavigation";
 import RequiresAuthentication from "./components/RequiresAuthentication/RequiresAuthentication";
@@ -68,11 +69,13 @@ class App extends Component {
                 path="register"
                 component={props => <NoAuthPage {...props} form="register" />}
               />
+
               <Route component={RequiresAuthentication(MainNavigation)}>
                 <Route path="dashboard" component={DashboardPage} />
                 <Route path="teams" component={TeamsPage} />
                 <Route path="players" component={PlayersPage} />
                 <Route path="profile" component={ProfilePage} />
+                <Route path="invite/:leagueId" component={LeagueInvitePage} />
               </Route>
             </Route>
           </Router>

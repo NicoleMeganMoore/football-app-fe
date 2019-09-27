@@ -2,7 +2,13 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import { getIsAuthenticated, getActivePage } from "../../redux/rootReducer";
+import draftWarsLogoSVG from "../../images/draftwars-logo.svg";
+
+import {
+  getIsAuthenticated,
+  getLocation,
+  getIsFetchingLeagues
+} from "../../redux/rootReducer";
 
 import { signOutUser } from "../../redux/modules/authentication";
 
@@ -14,23 +20,27 @@ import {
   navigateToProfile
 } from "../../redux/modules/location";
 
+import { fetchLeagues } from "../../redux/modules/user";
+
 import "./MainNavigation.scss";
 
 class MainNavigation extends Component {
   static propTypes = {
-    activePage: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
     isAuthenticated: PropTypes.bool.isRequired
   };
 
   componentDidMount = () => {
     if (!this.props.isAuthenticated) {
       this.props.navigateToLogin();
+    } else {
+      this.props.fetchLeagues();
     }
   };
 
   getNavItemClass = page => {
     return `main-navigation__item${
-      page === this.props.activePage ? " active" : ""
+      page === this.props.location ? " active" : ""
     }`;
   };
 
@@ -40,9 +50,13 @@ class MainNavigation extends Component {
         <header className="main-navigation">
           <div className="main-navigation-left-container">
             <div className="main-navigation__logo">
-              <h1>DraftWars</h1>
+              <img
+                className="draftwars-logo"
+                src={draftWarsLogoSVG}
+                alt="DraftWars"
+              />
             </div>
-            <div className={this.getNavItemClass("dashboard")}>
+            <div className={this.getNavItemClass("/dashboard")}>
               <button
                 className="main-navigation__button"
                 onClick={this.props.navigateToDashboard}
@@ -50,7 +64,7 @@ class MainNavigation extends Component {
                 Dashboard
               </button>
             </div>
-            <div className={this.getNavItemClass("teams")}>
+            <div className={this.getNavItemClass("/teams")}>
               <button
                 className="main-navigation__button"
                 onClick={this.props.navigateToTeams}
@@ -58,7 +72,7 @@ class MainNavigation extends Component {
                 Teams
               </button>
             </div>
-            <div className={this.getNavItemClass("players")}>
+            <div className={this.getNavItemClass("/players")}>
               <button
                 className="main-navigation__button"
                 onClick={this.props.navigateToPlayers}
@@ -69,7 +83,7 @@ class MainNavigation extends Component {
           </div>
 
           <div className="main-navigation-right-container">
-            <div className={this.getNavItemClass("profile")}>
+            <div className={this.getNavItemClass("/profile")}>
               <button
                 className="main-navigation__button"
                 onClick={this.props.navigateToProfile}
@@ -101,7 +115,8 @@ class MainNavigation extends Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: getIsAuthenticated(state),
-  activePage: getActivePage(state)
+  location: getLocation(state),
+  isFetchingLeagues: getIsFetchingLeagues(state)
 });
 
 // const mapDispatchToProps = dispatch => ({
@@ -117,6 +132,7 @@ export default connect(
     navigateToTeams,
     navigateToPlayers,
     navigateToProfile,
-    signOutUser
+    signOutUser,
+    fetchLeagues
   }
 )(MainNavigation);

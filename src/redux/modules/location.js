@@ -1,6 +1,12 @@
 import { REHYDRATE } from "redux-persist";
 import { LOCATION_CHANGE, push } from "react-router-redux";
 
+export const SET_ACTIVE_PAGE = "SET_ACTIVE_PAGE";
+
+export const setActivePage = page => dispatch => {
+  dispatch({ type: SET_ACTIVE_PAGE, payload: page });
+};
+
 export const navigateToLogin = () => dispatch => {
   dispatch(push("/login"));
 };
@@ -26,11 +32,19 @@ export const navigateToProfile = () => dispatch => {
 };
 
 const defaultState = {
+  activePage: "dashboard",
   location: null
 };
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case SET_ACTIVE_PAGE: {
+      return {
+        ...state,
+        activePage: action.payload
+      };
+    }
+
     case LOCATION_CHANGE: {
       const { pathname } = action.payload;
       return {
@@ -53,3 +67,4 @@ export default (state = defaultState, action) => {
 };
 
 export const getLocation = state => state.location;
+export const getActivePage = state => state.activePage;

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { signInUser, signOutUser } from "../../redux/modules/authentication";
 import { connect } from "react-redux";
-import _ from "lodash";
+import _get from "lodash/get";
 
 import { MdPerson, MdLock } from "react-icons/md";
 import { GiAmericanFootballHelmet } from "react-icons/gi";
@@ -31,12 +31,12 @@ class LoginForm extends Component {
   };
 
   componentDidMount = () => {
-    const autoEmail = _.get(
+    const autoEmail = _get(
       document,
       'getElementById("login-email-input").autocomplete',
       ""
     );
-    const autoPassword = _.get(
+    const autoPassword = _get(
       document,
       'getElementById("login-password-input").autocomplete;',
       ""
