@@ -53,8 +53,6 @@ export const getIsCreatingUser = state =>
 
 // LOCATION
 export const getLocation = state => fromLocation.getLocation(state.location);
-export const getActivePage = state =>
-  fromLocation.getActivePage(state.location);
 
 // USER
 export const getLeagues = state => fromUser.getLeagues(state.user);

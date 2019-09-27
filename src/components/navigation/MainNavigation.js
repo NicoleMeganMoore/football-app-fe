@@ -20,7 +20,7 @@ import {
   navigateToProfile
 } from "../../redux/modules/location";
 
-import { fetchLeagues } from "../../redux/modules/user";
+import { fetchUserDetails, fetchLeagues } from "../../redux/modules/user";
 
 import "./MainNavigation.scss";
 
@@ -34,7 +34,8 @@ class MainNavigation extends Component {
     if (!this.props.isAuthenticated) {
       this.props.navigateToLogin();
     } else {
-      this.props.fetchLeagues();
+      // this.props.fetchLeagues();
+      this.props.fetchUserDetails();
     }
   };
 
@@ -127,6 +128,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
+    fetchUserDetails,
     navigateToDashboard,
     navigateToLogin,
     navigateToTeams,

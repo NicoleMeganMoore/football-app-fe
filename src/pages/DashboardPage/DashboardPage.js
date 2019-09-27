@@ -9,14 +9,11 @@ import {
   getIsFetchingLeagues
 } from "../../redux/rootReducer";
 import { createLeague } from "../../redux/modules/user";
-import { setActivePage } from "../../redux/modules/location";
 
 import "./DashboardPage.css";
 
 class DashboardPage extends Component {
-  componentDidMount = () => {
-    this.props.setActivePage("dashboard");
-  };
+  componentDidMount = () => {};
 
   createLeague = () => {
     this.props
@@ -36,7 +33,19 @@ class DashboardPage extends Component {
 
     if (_get(this.props.leagues, "length")) {
       return this.props.leagues.map(league => {
-        return <h1>{league.id}</h1>;
+        return (
+          <div>
+            <div>league name: {league.league_name}</div>
+            <div>league id: {league.id}</div>
+            <div>opponent email: {league.opponent}</div>
+            <div>pts per rushing yd: {league.settings.pts_per_rushing_yd}</div>
+            <div>
+              pending invitation:{" "}
+              {league.user_list.length === 1 ? "true" : "false"}
+            </div>
+            <br />
+          </div>
+        );
       });
     }
 
@@ -71,7 +80,6 @@ export default connect(
   {
     signInUser,
     signOutUser,
-    setActivePage,
     createLeague
   }
 )(DashboardPage);

@@ -2,17 +2,22 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import _get from "lodash/get";
 
-import { setActivePage } from "../../redux/modules/location";
+import { fetchLeagueById } from "../../redux/modules/user";
 
 import "./LeagueInvitePage.css";
 
 class LeagueInvitePage extends Component {
   componentDidMount = () => {
-    this.props.setActivePage("invite");
-
     const leagueId = _get(this.props.params, "leagueId");
     // make sure current user is the one that was invited to the league
-    // this.props.fetchLeagueOpponent(leagueId);
+    this.props
+      .fetchLeagueById(leagueId)
+      .then(league => {
+        // if (_get(league, 'opponent') === )
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   render = () => {
@@ -29,6 +34,6 @@ const mapStateToProps = state => ({});
 export default connect(
   mapStateToProps,
   {
-    setActivePage
+    fetchLeagueById
   }
 )(LeagueInvitePage);

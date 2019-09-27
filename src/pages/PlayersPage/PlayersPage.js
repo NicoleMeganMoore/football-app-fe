@@ -1,14 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { setActivePage } from "../../redux/modules/location";
-
 import "./PlayersPage.css";
 
 class PlayersPage extends Component {
-  componentDidMount = () => {
-    this.props.setActivePage("players");
-  };
+  componentDidMount = () => {};
 
   render = () => {
     return (
@@ -23,7 +19,5 @@ const mapStateToProps = state => ({});
 
 export default connect(
   mapStateToProps,
-  {
-    setActivePage
-  }
+  {}
 )(PlayersPage);

@@ -6,7 +6,7 @@ import { graphqlRequest } from "../../js/graphqlService";
 
 import { navigateToLogin } from "./location";
 
-import * as fromRoot from "../rootReducer";
+// import * as fromRoot from "../rootReducer";
 
 export const CREATE_USER = "CREATE_USER";
 export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
@@ -24,7 +24,7 @@ export const clearToken = () => dispatch => {
   dispatch({ type: CLEAR_TOKEN });
 };
 
-export const signInUser = (email, password) => dispatch => {
+export const signInUser = (email, password) => async dispatch => {
   dispatch({ type: SIGN_IN_USER, payload: { email, password } });
 
   const query = `
@@ -36,19 +36,17 @@ export const signInUser = (email, password) => dispatch => {
       }
     }
   `;
-
-  return graphqlRequest(query)
-    .then(response => {
-      dispatch({
-        type: SIGN_IN_USER_SUCCESS,
-        payload: _get(response, "login.token")
-      });
-      return Promise.resolve();
-    })
-    .catch(err => {
-      dispatch({ type: SIGN_IN_USER_FAILURE });
-      return Promise.reject(err);
+  try {
+    const response = await graphqlRequest(query);
+    dispatch({
+      type: SIGN_IN_USER_SUCCESS,
+      payload: _get(response, "login.token")
     });
+    return Promise.resolve();
+  } catch (err) {
+    dispatch({ type: SIGN_IN_USER_FAILURE });
+    return Promise.reject(err);
+  }
 };
 
 export const signOutUser = () => (dispatch, getState) => {
@@ -91,6 +89,7 @@ export const createUser = (
 };
 
 const defaultState = {
+  isAuthenticated: false,
   token: null,
   isSigningInUser: false,
   isCreatingUser: false
@@ -101,15 +100,15 @@ export default (state = defaultState, action) => {
     case SIGN_IN_USER: {
       return {
         ...state,
+        isAuthenticated: false,
         isSigningInUser: true
       };
     }
 
     case SIGN_IN_USER_SUCCESS: {
-      const token = action.payload;
       return {
         ...state,
-        token: token,
+        token: action.payload,
         isAuthenticated: true,
         isSigningInUser: false
       };
@@ -118,6 +117,8 @@ export default (state = defaultState, action) => {
     case SIGN_IN_USER_FAILURE: {
       return {
         ...state,
+        token: undefined,
+        isAuthenticated: false,
         isSigningInUser: false
       };
     }
