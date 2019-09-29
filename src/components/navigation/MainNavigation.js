@@ -108,7 +108,7 @@ class MainNavigation extends Component {
           //   <div className="secondary-navigation-right-container">;lkj;</div>
           // </header>
         }
-        {this.props.children}
+        <main className="main-content">{this.props.children}</main>
       </Fragment>
     );
   };

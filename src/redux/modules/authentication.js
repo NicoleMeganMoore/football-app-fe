@@ -81,7 +81,7 @@ export const refreshToken = () => async (dispatch, getState) => {
         type: REFRESH_TOKEN_SUCCESS,
         payload: _get(response, "token")
       });
-      return _get(response, "token.tokens");
+      return Promise.resolve(_get(response, "token.tokens.accessToken"));
     })
     .catch(err => {
       dispatch({ type: REFRESH_TOKEN_FAILURE });
@@ -161,6 +161,23 @@ export default (state = defaultState, action) => {
         tokens: {},
         isAuthenticated: false,
         isSigningInUser: false
+      };
+    }
+
+    case REFRESH_TOKEN_SUCCESS: {
+      const tokenData = action.payload;
+      return {
+        ...state,
+        tokens: tokenData.tokens,
+        isAuthenticated: true
+      };
+    }
+
+    case REFRESH_TOKEN_FAILURE: {
+      return {
+        ...state,
+        tokens: {},
+        isAuthenticated: false
       };
     }
 

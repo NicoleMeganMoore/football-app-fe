@@ -6,6 +6,53 @@ import { store } from "../App";
 
 const GENERAL_ERROR_MESSAGE = "Something went wrong, please try again.";
 
+const retryOnTokenExpiry = axiosInstance => {
+  // Interceptor to refresh expired access tokens
+  axiosInstance.interceptors.response.use(null, error => {
+    const { config } = error;
+
+    // const originalRequest = error.config;
+    const statusCode = _get(error, "response.data.errors[0].statusCode");
+    const errorMessage = _get(error, "response.data.errors[0].message");
+
+    if (statusCode === 403 && errorMessage === "Invalid Refresh Token") {
+      store.dispatch(signOutUser());
+    }
+
+    if (statusCode !== 401) {
+      return Promise.reject(error);
+    }
+
+    // Make call to token endpoint to refresh token
+    return store
+      .dispatch(refreshToken())
+      .then(accessToken => {
+        const retryConfig = {
+          ...config,
+          headers: {
+            ...config.headers,
+            Authorization: `Bearer ${accessToken}`
+          }
+        };
+
+        // Return original request object with new access token.
+        return new Promise((resolve, reject) => {
+          axios
+            .request(retryConfig)
+            .then(response => {
+              resolve(response);
+            })
+            .catch(error => {
+              reject(error);
+            });
+        });
+      })
+      .catch(err => {
+        return Promise.reject(err);
+      });
+  });
+};
+
 export const graphqlRequest = async (query, token) => {
   const axiosInstance = axios.create({
     headers: {
@@ -15,44 +62,7 @@ export const graphqlRequest = async (query, token) => {
     }
   });
 
-  // Interceptor to refresh expired access tokens
-  axiosInstance.interceptors.response.use(
-    response => {
-      return response;
-    },
-    error => {
-      const statusCode = _get(error, "response.data.errors[0].statusCode");
-      const originalRequest = { ...error.config };
-
-      if (statusCode === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-
-        // Make call to token endpoint to refresh token
-        return store
-          .dispatch(refreshToken())
-          .then(tokens => {
-            if (tokens) {
-              // Return originalRequest object with Axios.
-              originalRequest.headers = {
-                ...originalRequest.headers,
-                Authorization: `Bearer ${tokens.accessToken}`
-                // Retry: true
-              };
-              return axios(originalRequest);
-            }
-            store.dispatch(signOutUser());
-            return Promise.reject();
-          })
-          .catch(() => {
-            store.dispatch(signOutUser());
-            return Promise.reject();
-          });
-      }
-
-      // If you make it here, there was a non-token related error
-      return Promise.reject(error);
-    }
-  );
+  retryOnTokenExpiry(axiosInstance);
 
   const requestBody = {
     query: query
