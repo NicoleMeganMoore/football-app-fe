@@ -13,8 +13,6 @@ import { createLeague } from "../../redux/modules/user";
 import "./DashboardPage.css";
 
 class DashboardPage extends Component {
-  componentDidMount = () => {};
-
   createLeague = () => {
     this.props
       .createLeague()

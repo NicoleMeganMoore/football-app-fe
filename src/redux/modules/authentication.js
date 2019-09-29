@@ -6,7 +6,7 @@ import { graphqlRequest } from "../../js/graphqlService";
 
 import { navigateToLogin } from "./location";
 
-// import * as fromRoot from "../rootReducer";
+import * as fromRoot from "../rootReducer";
 
 export const CREATE_USER = "CREATE_USER";
 export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
@@ -15,6 +15,10 @@ export const CREATE_USER_FAILURE = "CREATE_USER_FAILURE";
 export const SIGN_IN_USER = "SIGN_IN_USER";
 export const SIGN_IN_USER_SUCCESS = "SIGN_IN_USER_SUCCESS";
 export const SIGN_IN_USER_FAILURE = "SIGN_IN_USER_FAILURE";
+
+export const REFRESH_TOKEN = "REFRESH_TOKEN";
+export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";
+export const REFRESH_TOKEN_FAILURE = "REFRESH_TOKEN_FAILURE";
 
 export const SIGN_OUT_USER = "SIGN_OUT_USER";
 
@@ -31,7 +35,10 @@ export const signInUser = (email, password) => async dispatch => {
     query {
       login(email: "${email}", password: "${password}") {
         userId
-        token
+        tokens {
+          accessToken
+          refreshToken
+        }
         tokenExpiration
       }
     }
@@ -40,13 +47,46 @@ export const signInUser = (email, password) => async dispatch => {
     const response = await graphqlRequest(query);
     dispatch({
       type: SIGN_IN_USER_SUCCESS,
-      payload: _get(response, "login.token")
+      payload: _get(response, "login")
     });
     return Promise.resolve();
   } catch (err) {
     dispatch({ type: SIGN_IN_USER_FAILURE });
     return Promise.reject(err);
   }
+};
+
+export const refreshToken = () => async (dispatch, getState) => {
+  dispatch({ type: REFRESH_TOKEN });
+
+  const state = getState();
+  const { refreshToken } = fromRoot.getTokens(state);
+
+  const query = `
+    query {
+      token(refreshToken: "${refreshToken}") {
+        userId
+        tokens {
+          accessToken
+          refreshToken
+        }
+        tokenExpiration
+      }
+    }
+  `;
+
+  return graphqlRequest(query)
+    .then(response => {
+      dispatch({
+        type: REFRESH_TOKEN_SUCCESS,
+        payload: _get(response, "token")
+      });
+      return _get(response, "token.tokens");
+    })
+    .catch(err => {
+      dispatch({ type: REFRESH_TOKEN_FAILURE });
+      return Promise.reject(err);
+    });
 };
 
 export const signOutUser = () => (dispatch, getState) => {
@@ -89,8 +129,8 @@ export const createUser = (
 };
 
 const defaultState = {
+  tokens: {},
   isAuthenticated: false,
-  token: null,
   isSigningInUser: false,
   isCreatingUser: false
 };
@@ -106,9 +146,10 @@ export default (state = defaultState, action) => {
     }
 
     case SIGN_IN_USER_SUCCESS: {
+      const loginData = action.payload;
       return {
         ...state,
-        token: action.payload,
+        tokens: loginData.tokens,
         isAuthenticated: true,
         isSigningInUser: false
       };
@@ -117,7 +158,7 @@ export default (state = defaultState, action) => {
     case SIGN_IN_USER_FAILURE: {
       return {
         ...state,
-        token: undefined,
+        tokens: {},
         isAuthenticated: false,
         isSigningInUser: false
       };
@@ -126,6 +167,7 @@ export default (state = defaultState, action) => {
     case SIGN_OUT_USER: {
       return {
         ...state,
+        tokens: {},
         isAuthenticated: false
       };
     }
@@ -175,7 +217,7 @@ export default (state = defaultState, action) => {
   }
 };
 
-export const getToken = state => state.token;
+export const getTokens = state => state.tokens;
 export const getIsAuthenticated = state => state.isAuthenticated;
 export const getIsSigningIn = state => state.isSigningInUser;
 export const getIsCreatingUser = state => state.getIsCreatingUser;

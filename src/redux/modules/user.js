@@ -20,12 +20,11 @@ export const FETCH_LEAGUE = "FETCH_LEAGUE";
 export const FETCH_LEAGUE_SUCCESS = "FETCH_LEAGUE_SUCCESS";
 export const FETCH_LEAGUE_FAILURE = "FETCH_LEAGUE_FAILURE";
 
-export const fetchUserDetails = () => (dispatch, getState) => {
-  console.log("fetching user details");
+export const fetchUserDetails = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_USER_DETAILS });
 
   const state = getState();
-  const token = fromRoot.getToken(state);
+  const { accessToken } = fromRoot.getTokens(state);
 
   const query = `
     query {
@@ -57,27 +56,24 @@ export const fetchUserDetails = () => (dispatch, getState) => {
     }
   `;
 
-  return graphqlRequest(query, token)
-    .then(response => {
-      console.log("USER DETAILS SUCCESS");
-      console.log(response);
-      dispatch({
-        type: FETCH_USER_DETAILS_SUCCESS,
-        payload: _get(response, "user")
-      });
-      return Promise.resolve(response);
-    })
-    .catch(err => {
-      dispatch({ type: FETCH_USER_DETAILS_FAILURE });
-      return Promise.reject(err);
+  try {
+    const response = await graphqlRequest(query, accessToken);
+    dispatch({
+      type: FETCH_USER_DETAILS_SUCCESS,
+      payload: _get(response, "user")
     });
+    return response;
+  } catch (err) {
+    dispatch({ type: FETCH_USER_DETAILS_FAILURE });
+    return err;
+  }
 };
 
 export const fetchLeagues = () => (dispatch, getState) => {
   dispatch({ type: FETCH_LEAGUES });
 
   const state = getState();
-  const token = fromRoot.getToken(state);
+  const { accessToken } = fromRoot.getTokens(state);
 
   const query = `
     query {
@@ -104,7 +100,7 @@ export const fetchLeagues = () => (dispatch, getState) => {
     }
   `;
 
-  return graphqlRequest(query, token)
+  return graphqlRequest(query, accessToken)
     .then(response => {
       dispatch({
         type: FETCH_LEAGUES_SUCCESS,
@@ -145,11 +141,11 @@ export const fetchLeagueById = id => dispatch => {
     });
 };
 
-export const createLeague = () => (dispatch, getState) => {
+export const createLeague = () => async (dispatch, getState) => {
   dispatch({ type: CREATE_LEAGUE });
 
   const state = getState();
-  const token = fromRoot.getToken(state);
+  const { accessToken } = fromRoot.getTokens(state);
 
   const query = `
     mutation {
@@ -176,18 +172,17 @@ export const createLeague = () => (dispatch, getState) => {
     }
   `;
 
-  return graphqlRequest(query, token)
-    .then(response => {
-      dispatch({
-        type: CREATE_LEAGUE_SUCCESS,
-        payload: _get(response, "createLeague")
-      });
-      return Promise.resolve(response);
-    })
-    .catch(err => {
-      dispatch({ CREATE_LEAGUE_FAILURE });
-      return Promise.reject(err);
+  try {
+    const response = await graphqlRequest(query, accessToken);
+    dispatch({
+      type: CREATE_LEAGUE_SUCCESS,
+      payload: _get(response, "createLeague")
     });
+    return response;
+  } catch (err) {
+    dispatch({ CREATE_LEAGUE_FAILURE });
+    return err;
+  }
 };
 
 const defaultState = {

@@ -11,7 +11,12 @@ import userReducer, * as fromUser from "./modules/user";
 
 const appReducer = persistCombineReducers(
   {
-    blacklist: ["location", "router"],
+    blacklist: [
+      // "authentication",
+      // "location",
+      // "router",
+      "user"
+    ],
     key: "primary",
     storage
   },
@@ -33,8 +38,9 @@ export default (state, action) => {
     // eslint-disable-next-line no-param-reassign
     state = {
       ...state,
-      location: locationReducer,
       authentication: undefined,
+      location: undefined,
+      router: undefined,
       user: undefined
     };
   }
@@ -42,8 +48,8 @@ export default (state, action) => {
 };
 
 // AUTHENTICATION
-export const getToken = state =>
-  fromAuthentication.getToken(state.authentication);
+export const getTokens = state =>
+  fromAuthentication.getTokens(state.authentication);
 export const getIsAuthenticated = state =>
   fromAuthentication.getIsAuthenticated(state.authentication);
 export const getIsSigningIn = state =>
