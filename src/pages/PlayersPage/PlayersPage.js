@@ -9,7 +9,8 @@ class PlayersPage extends Component {
   render = () => {
     return (
       <div className="players-page">
-        <h1>Players Page</h1>
+        List of players will go here. User should be able to switch between
+        active leagues in a dropdown on the top right.
       </div>
     );
   };

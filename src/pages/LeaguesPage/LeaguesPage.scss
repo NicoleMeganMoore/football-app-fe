@@ -1,0 +1,27 @@
+.leagues-page {
+}
+
+.league-setting-input-container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.league-setting-input {
+  width: 45px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-family: sans-serif;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.9);
+  margin: 3px;
+}
+
+.opponent-input-validation-error {
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  font-size: 12px;
+  color: #ff5e5e;
+}

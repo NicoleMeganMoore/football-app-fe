@@ -1,49 +1,104 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { signInUser, signOutUser } from "../../redux/modules/authentication";
 import { connect } from "react-redux";
 import _get from "lodash/get";
+import _find from "lodash/find";
 
 import {
   getLeagues,
   getIsCreatingLeague,
-  getIsFetchingLeagues
+  getIsFetchingUser,
+  getCurrentWeek,
+  getIsDraftDay
+  // getIsFetchingLeagues
 } from "../../redux/rootReducer";
-import { createLeague } from "../../redux/modules/user";
+import { createLeague, cancelLeagueInvitation } from "../../redux/modules/user";
 
-import "./DashboardPage.css";
+import {
+  navigateToLeagues,
+  navigateToDashboard
+} from "../../redux/modules/location";
+
+import "./DashboardPage.scss";
 
 class DashboardPage extends Component {
   createLeague = () => {
     this.props
       .createLeague()
-      .then(response => {
-        console.log(response);
+      .then(() => {
+        this.props.navigateToDashboard();
       })
       .catch(err => {
         console.log(err);
       });
   };
 
+  renderInvitationPendingContent = league => {
+    return (
+      <Fragment>
+        <div>Invitation sent to {league.opponent}</div>
+        <br />
+        <button className="draftwars-btn">Edit Settings</button>
+        <button
+          className="draftwars-btn"
+          onClick={() => this.props.cancelLeagueInvitation(league.id)}
+        >
+          Cancel invitation
+        </button>
+      </Fragment>
+    );
+  };
+
+  renderDraftDayContent = league => {
+    return <button className="draftwars-btn">Draft Now!</button>;
+  };
+
+  renderDraftCountdownContent = league => {
+    return (
+      <Fragment>
+        <br />
+        Its not time to draft yet, you will have to wait a bit.
+      </Fragment>
+    );
+  };
+
+  renderActiveMatchSummary = league => {
+    return "Here is your active match summary!";
+  };
+
+  renderLeagueTile = league => {
+    const isInvitationPending = league.user_list.length === 1;
+    const hasActiveMatch = !!_find(league.matches, {
+      week: this.props.currentWeek
+    });
+
+    let content = null;
+    if (isInvitationPending) {
+      content = this.renderInvitationPendingContent(league);
+    } else if (!hasActiveMatch && this.props.isDraftDay) {
+      content = this.renderDraftDayContent(league);
+    } else if (!hasActiveMatch && !this.props.isDraftDay) {
+      content = this.renderDraftCountdownContent(league);
+    } else if (hasActiveMatch) {
+      content = this.renderActiveMatchSummary(league);
+    }
+
+    return (
+      <div className="league-tile" key={`league-tile-${league.id}`}>
+        <div>{league.league_name}</div>
+        {content}
+      </div>
+    );
+  };
+
   renderActiveLeagueList = () => {
-    if (this.props.isFetchingLeagues) {
+    if (this.props.isFetchingUser) {
       return <div>loading...</div>;
     }
 
     if (_get(this.props.leagues, "length")) {
       return this.props.leagues.map(league => {
-        return (
-          <div>
-            <div>league name: {league.league_name}</div>
-            <div>league id: {league.id}</div>
-            <div>opponent email: {league.opponent}</div>
-            <div>pts per rushing yd: {league.settings.pts_per_rushing_yd}</div>
-            <div>
-              pending invitation:{" "}
-              {league.user_list.length === 1 ? "true" : "false"}
-            </div>
-            <br />
-          </div>
-        );
+        return this.renderLeagueTile(league);
       });
     }
 
@@ -59,8 +114,15 @@ class DashboardPage extends Component {
           // Start a head to head league. You can start a league any time and choose
           // the weeks you want to play
         }
-        <h1>Dashboard Page</h1>
-        <button onClick={this.createLeague}>Start a League</button>
+        <div className="start-league-btn-container">
+          <h2>Week {this.props.currentWeek}</h2>
+          <button
+            className="draftwars-btn start-league-btn"
+            onClick={this.props.navigateToLeagues}
+          >
+            Start a League
+          </button>
+        </div>
         {this.renderActiveLeagueList()}
       </div>
     );
@@ -70,7 +132,10 @@ class DashboardPage extends Component {
 const mapStateToProps = state => ({
   leagues: getLeagues(state),
   isCreatingLeague: getIsCreatingLeague(state),
-  isFetchingLeagues: getIsFetchingLeagues(state)
+  isFetchingUser: getIsFetchingUser(state),
+  currentWeek: getCurrentWeek(state),
+  isDraftDay: getIsDraftDay(state)
+  // isFetchingLeagues: getIsFetchingLeagues(state)
 });
 
 export default connect(
@@ -78,6 +143,8 @@ export default connect(
   {
     signInUser,
     signOutUser,
-    createLeague
+    createLeague,
+    navigateToLeagues,
+    cancelLeagueInvitation
   }
 )(DashboardPage);

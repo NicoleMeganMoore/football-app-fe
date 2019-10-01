@@ -1,30 +1,35 @@
 .main-content {
   position: absolute;
+  top: 4rem;
   height: calc(100% - 4rem);
-  overflow-y: auto;
   width: 100%;
-  margin-top: 4rem;
-  padding: 0;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background: #f9f9f9;
+  padding: 20px;
+  &.with-secondary-nav {
+    height: calc(100% - 6.5rem);
+    top: 6.5rem;
+  }
 }
 
 .main-navigation {
-  position: fixed;
-  left: 0;
-  top: 0;
+  position: absolute;
   width: 100%;
   height: 4rem;
-  background: linear-gradient(
-    222deg,
-    rgba(53, 79, 97, 1) 0%,
-    rgba(45, 45, 45, 1) 100%
-  );
+  background: linear-gradient(222deg, #354f61 0%, #2d2d2d 100%);
   padding: 0 1rem;
   color: rgba(255, 255, 255, 0.9);
   box-sizing: border-box;
-  box-shadow: 0 -8px 12px 12px rgba(0, 0, 0, 0.3);
-
+  box-shadow: 0 -2px 8px 2px rgba(0, 0, 0, 0.1);
+  z-index: 3;
   display: flex;
   justify-content: space-between;
+
+  // flex-grow: 0;
+  // flex-shrink: 0;
 
   .main-navigation__button {
     background: transparent;
@@ -53,17 +58,28 @@
 }
 
 .secondary-navigation {
-  position: fixed;
-  left: 0;
+  position: absolute;
   top: 4rem;
   width: 100%;
   height: 2.5rem;
-  background: gray;
+  opacity: 1;
+  visibility: visible;
+  background: #fff;
   padding: 0 1rem;
   box-sizing: border-box;
+  box-shadow: 0 -11px 10px 10px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid #d2d2d2;
+  transition: all 0.3s ease;
+  z-index: 2;
 
   display: flex;
   justify-content: space-between;
+
+  &.hidden {
+    height: 0;
+    opacity: 0;
+    visibility: none;
+  }
 
   .secondary-navigation-left-container,
   .secondary-navigation-right-container {
@@ -72,6 +88,24 @@
     align-items: center;
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  .secondary-navigation__button {
+    height: 34px;
+    line-height: 34px;
+    margin-right: 20px;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 13px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    border-top: 2px solid transparent;
+    cursor: pointer;
+
+    &:hover {
+      color: #01963d;
+      border-bottom: 2px solid #01963d;
+    }
   }
 }
 
@@ -90,6 +124,7 @@
   height: 100%;
   &.active {
     background: rgba(255, 255, 255, 0.07);
+    // border-bottom: 8px solid lightgreen;
   }
 }
 .main-navigation__button {

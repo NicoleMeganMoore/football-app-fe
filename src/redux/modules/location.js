@@ -1,4 +1,3 @@
-import { REHYDRATE } from "redux-persist";
 import { LOCATION_CHANGE, push } from "react-router-redux";
 
 export const SET_ACTIVE_PAGE = "SET_ACTIVE_PAGE";
@@ -15,8 +14,8 @@ export const navigateToRegister = () => dispatch => {
   dispatch(push("/register"));
 };
 
-export const navigateToTeams = () => dispatch => {
-  dispatch(push("/teams"));
+export const navigateToLeagues = () => dispatch => {
+  dispatch(push("/leagues"));
 };
 
 export const navigateToPlayers = () => dispatch => {
@@ -39,14 +38,6 @@ export default (state = defaultState, action) => {
         ...state,
         location: pathname
       };
-    }
-
-    case REHYDRATE: {
-      // const incoming = action.payload ? action.payload.location : undefined;
-      // if (incoming) {
-      //   return { ...state.location, ...incoming };
-      // }
-      return state;
     }
 
     default:

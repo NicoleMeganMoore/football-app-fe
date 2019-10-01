@@ -15,41 +15,40 @@ const retryOnTokenExpiry = axiosInstance => {
     const statusCode = _get(error, "response.data.errors[0].statusCode");
     const errorMessage = _get(error, "response.data.errors[0].message");
 
-    if (statusCode === 403 && errorMessage === "Invalid Refresh Token") {
+    if (statusCode === 401 && errorMessage === "Invalid Refresh Token") {
       store.dispatch(signOutUser());
-    }
-
-    if (statusCode !== 401) {
       return Promise.reject(error);
-    }
+    } else if (statusCode === 401 && errorMessage === "Expired Token") {
+      // Make call to token endpoint to refresh token
+      return store
+        .dispatch(refreshToken())
+        .then(accessToken => {
+          const retryConfig = {
+            ...config,
+            headers: {
+              ...config.headers,
+              Authorization: `Bearer ${accessToken}`
+            },
+            isRetry: true
+          };
 
-    // Make call to token endpoint to refresh token
-    return store
-      .dispatch(refreshToken())
-      .then(accessToken => {
-        const retryConfig = {
-          ...config,
-          headers: {
-            ...config.headers,
-            Authorization: `Bearer ${accessToken}`
-          }
-        };
-
-        // Return original request object with new access token.
-        return new Promise((resolve, reject) => {
-          axios
-            .request(retryConfig)
-            .then(response => {
-              resolve(response);
-            })
-            .catch(error => {
-              reject(error);
-            });
+          // Return original request object with new access token.
+          return new Promise((resolve, reject) => {
+            axios
+              .request(retryConfig)
+              .then(response => {
+                resolve(response);
+              })
+              .catch(error => {
+                reject(error);
+              });
+          });
+        })
+        .catch(err => {
+          return Promise.reject(err);
         });
-      })
-      .catch(err => {
-        return Promise.reject(err);
-      });
+    }
+    return Promise.reject(error);
   });
 };
 

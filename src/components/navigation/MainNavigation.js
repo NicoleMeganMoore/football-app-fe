@@ -1,13 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { ToastContainer, Slide } from "react-toastify";
 
 import draftWarsLogoSVG from "../../images/draftwars-logo.svg";
 
 import {
   getIsAuthenticated,
   getLocation,
-  getIsFetchingLeagues
+  // getIsFetchingLeagues
+  getIsFetchingUser
 } from "../../redux/rootReducer";
 
 import { signOutUser } from "../../redux/modules/authentication";
@@ -15,19 +17,28 @@ import { signOutUser } from "../../redux/modules/authentication";
 import {
   navigateToDashboard,
   navigateToLogin,
-  navigateToTeams,
+  navigateToLeagues,
   navigateToPlayers,
   navigateToProfile
 } from "../../redux/modules/location";
 
-import { fetchUserDetails, fetchLeagues } from "../../redux/modules/user";
+import {
+  fetchUserDetails
+  // fetchLeagues
+} from "../../redux/modules/user";
+
+import { fetchSeasonDetails } from "../../redux/modules/season";
 
 import "./MainNavigation.scss";
 
 class MainNavigation extends Component {
   static propTypes = {
-    location: PropTypes.string.isRequired,
+    location: PropTypes.string,
     isAuthenticated: PropTypes.bool.isRequired
+  };
+
+  static defaultProps = {
+    location: null
   };
 
   componentDidMount = () => {
@@ -36,7 +47,41 @@ class MainNavigation extends Component {
     } else {
       // this.props.fetchLeagues();
       this.props.fetchUserDetails();
+      this.props.fetchSeasonDetails();
     }
+  };
+
+  renderSecondaryNavContent = () => {
+    if (this.props.location === "/leagues") {
+      return (
+        <Fragment>
+          <div className="secondary-navigation-left-container">
+            <div className="secondary-navigation__button">All Leagues</div>
+            <div className="secondary-navigation__button">
+              Pending Invitations
+            </div>
+            <div className="secondary-navigation__button">+ New League</div>
+          </div>
+          <div className="secondary-navigation-right-container">
+            <div className="secondary-navigation__button">Settings?</div>
+          </div>
+        </Fragment>
+      );
+    }
+    if (this.props.location === "/players") {
+      return (
+        <Fragment>
+          <div className="secondary-navigation-left-container">
+            <div className="secondary-navigation__button">All Players</div>
+            <div className="secondary-navigation__button">Add/Drop Player</div>
+          </div>
+          <div className="secondary-navigation-right-container">
+            <div className="secondary-navigation__button">Settings?</div>
+          </div>
+        </Fragment>
+      );
+    }
+    return null;
   };
 
   getNavItemClass = page => {
@@ -62,17 +107,19 @@ class MainNavigation extends Component {
                 className="main-navigation__button"
                 onClick={this.props.navigateToDashboard}
               >
-                Dashboard
+                Home
               </button>
             </div>
-            <div className={this.getNavItemClass("/teams")}>
-              <button
-                className="main-navigation__button"
-                onClick={this.props.navigateToTeams}
-              >
-                Teams
-              </button>
-            </div>
+            {
+              // <div className={this.getNavItemClass("/leagues")}>
+              //   <button
+              //     className="main-navigation__button"
+              //     onClick={this.props.navigateToLeagues}
+              //   >
+              //     Leagues
+              //   </button>
+              // </div>
+            }
             <div className={this.getNavItemClass("/players")}>
               <button
                 className="main-navigation__button"
@@ -102,13 +149,23 @@ class MainNavigation extends Component {
             </div>
           </div>
         </header>
-        {
-          // <header className="secondary-navigation">
-          //   <div className="secondary-navigation-left-container">awefl</div>
-          //   <div className="secondary-navigation-right-container">;lkj;</div>
-          // </header>
-        }
-        <main className="main-content">{this.props.children}</main>
+        <header
+          className={`secondary-navigation${
+            ["/players"].includes(this.props.location) ? "" : " hidden"
+          }`}
+        >
+          {this.renderSecondaryNavContent()}
+        </header>
+        <main
+          className={`main-content${
+            ["/players"].includes(this.props.location)
+              ? " with-secondary-nav"
+              : ""
+          }`}
+        >
+          {this.props.children}
+        </main>
+        <ToastContainer transition={Slide} />
       </Fragment>
     );
   };
@@ -116,8 +173,9 @@ class MainNavigation extends Component {
 
 const mapStateToProps = state => ({
   isAuthenticated: getIsAuthenticated(state),
-  location: getLocation(state),
-  isFetchingLeagues: getIsFetchingLeagues(state)
+  isFetchingUser: getIsFetchingUser(state),
+  location: getLocation(state)
+  // isFetchingLeagues: getIsFetchingLeagues(state)
 });
 
 // const mapDispatchToProps = dispatch => ({
@@ -131,10 +189,11 @@ export default connect(
     fetchUserDetails,
     navigateToDashboard,
     navigateToLogin,
-    navigateToTeams,
+    navigateToLeagues,
     navigateToPlayers,
     navigateToProfile,
     signOutUser,
-    fetchLeagues
+    fetchSeasonDetails
+    // fetchLeagues
   }
 )(MainNavigation);

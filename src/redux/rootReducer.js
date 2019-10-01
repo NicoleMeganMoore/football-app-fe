@@ -7,15 +7,16 @@ import { routerReducer } from "react-router-redux";
 
 import authenticationReducer, * as fromAuthentication from "./modules/authentication";
 import locationReducer, * as fromLocation from "./modules/location";
+import seasonReducer, * as fromSeason from "./modules/season";
 import userReducer, * as fromUser from "./modules/user";
 
 const appReducer = persistCombineReducers(
   {
     blacklist: [
       // "authentication",
-      // "location",
-      // "router",
-      "user"
+      "location",
+      "router"
+      // "user"
     ],
     key: "primary",
     storage
@@ -23,6 +24,7 @@ const appReducer = persistCombineReducers(
   {
     authentication: authenticationReducer,
     location: locationReducer,
+    season: seasonReducer,
     router: routerReducer,
     user: userReducer
   }
@@ -40,6 +42,7 @@ export default (state, action) => {
       ...state,
       authentication: undefined,
       location: undefined,
+      season: undefined,
       router: undefined,
       user: undefined
     };
@@ -61,8 +64,15 @@ export const getIsCreatingUser = state =>
 export const getLocation = state => fromLocation.getLocation(state.location);
 
 // USER
+export const getUser = state => fromUser.getUser(state.user);
 export const getLeagues = state => fromUser.getLeagues(state.user);
-export const getIsFetchingLeagues = state =>
-  fromUser.getIsFetchingLeagues(state.user);
+// export const getIsFetchingLeagues = state =>
+//   fromUser.getIsFetchingLeagues(state.user);
+export const getIsFetchingUser = state =>
+  fromUser.getIsFetchingUser(state.user);
 export const getIsCreatingLeague = state =>
   fromUser.getIsCreatingLeague(state.user);
+
+// SEASON
+export const getCurrentWeek = state => fromSeason.getCurrentWeek(state.season);
+export const getIsDraftDay = state => fromSeason.getIsDraftDay(state.season);

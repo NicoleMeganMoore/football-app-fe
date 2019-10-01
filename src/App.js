@@ -5,14 +5,14 @@ import { Provider } from "react-redux";
 import { configureStore } from "./redux/modules/store";
 import { PersistGate } from "redux-persist/lib/integration/react";
 
-// import axios from "axios";
+import axios from "axios";
 import { Router, Route, browserHistory, Redirect } from "react-router";
 
 import { syncHistoryWithStore } from "react-router-redux";
 
 import { NoAuthPage } from "./pages/NoAuthPage";
 import { DashboardPage } from "./pages/DashboardPage";
-import { TeamsPage } from "./pages/TeamsPage";
+import { LeaguesPage } from "./pages/LeaguesPage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { LeagueInvitePage } from "./pages/LeagueInvitePage";
@@ -36,12 +36,6 @@ const history = syncHistoryWithStore(browserHistory, store, {
 
 class App extends Component {
   componentDidMount = () => {
-    // const axiosInstance = axios.create({
-    //   auth: {
-    //     username: "3216d5f7-36cd-4fa7-b35e-20b3a0",
-    //     password: process.env.MY_SPORTS_FEED_PW
-    //   }
-    // });
     // axiosInstance
     //   .get(
     //     "https://api.mysportsfeeds.com/v1.2/pull/nfl/2019-regular/active_players.json"
@@ -69,10 +63,9 @@ class App extends Component {
                 path="register"
                 component={props => <NoAuthPage {...props} form="register" />}
               />
-
               <Route component={RequiresAuthentication(MainNavigation)}>
                 <Route path="dashboard" component={DashboardPage} />
-                <Route path="teams" component={TeamsPage} />
+                <Route path="leagues" component={LeaguesPage} />
                 <Route path="players" component={PlayersPage} />
                 <Route path="profile" component={ProfilePage} />
                 <Route path="invite/:leagueId" component={LeagueInvitePage} />

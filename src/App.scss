@@ -13,15 +13,25 @@ body {
 .page-container {
   height: 100%;
   width: 100%;
-  // padding: 6rem 2.5rem;
-  // margin-top: 4rem;
+  background: #f9f9f9;
   position: absolute;
   box-sizing: border-box;
-  overflow: auto;
-  background: #f3f3f3;
-  transition: all 0.5s ease;
+  overflow: hidden;
+}
 
-  &:after {
-    right: 2000px;
+.draftwars-btn {
+  background: white;
+  border: 1px solid lightgray;
+  padding: 10px;
+  border-radius: 4px;
+  width: auto;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+  &:focus {
+    border-color: green;
   }
 }
