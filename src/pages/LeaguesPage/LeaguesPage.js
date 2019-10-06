@@ -12,7 +12,7 @@ import "./LeaguesPage.scss";
 class LeaguesPage extends Component {
   state = {
     emailError: undefined,
-    opponentValue: "",
+    opponentValue: "nicolemcrawford@shaw.ca",
     passing_yd: 0.04,
     passing_td: 4,
     passing_int: -1,
@@ -53,9 +53,7 @@ class LeaguesPage extends Component {
       this.props
         .createLeague(this.state)
         .then(this.props.navigateToDashboard)
-        .catch(error => {
-          console.log(error);
-        });
+        .catch(error => {});
     }
   };
 
@@ -77,7 +75,6 @@ class LeaguesPage extends Component {
   render = () => {
     return (
       <div className="leagues-page">
-        <h1>New League</h1>
         <form onSubmit={this.onNewLeagueSubmit}>
           <h2>Opponent</h2>
           <div className="league-setting-input-container">

@@ -1,5 +1,5 @@
 import axios from "axios";
-import _get from "lodash/get";
+// import _get from "lodash/get";
 
 export const mySportsFeedRequest = url => {
   const axiosInstance = axios.create({

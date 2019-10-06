@@ -2,7 +2,11 @@ import { REHYDRATE } from "redux-persist";
 import _get from "lodash/get";
 import _filter from "lodash/filter";
 
-import { graphqlRequest } from "../../js/graphqlService";
+import {
+  graphqlRequest
+  // graphqlSubscribe
+} from "../../js/graphqlService";
+
 import * as fromRoot from "../rootReducer";
 
 export const FETCH_USER_DETAILS = "FETCH_USER_DETAILS";
@@ -28,6 +32,8 @@ export const CANCEL_LEAGUE_INVITATION_SUCCESS =
   "CANCEL_LEAGUE_INVITATION_SUCCESS";
 export const CANCEL_LEAGUE_INVITATION_FAILURE =
   "CANCEL_LEAGUE_INVITATION_FAILURE";
+
+export const subscribeToLeage = () => async (dispatch, getState) => {};
 
 export const fetchUserDetails = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_USER_DETAILS });
@@ -113,8 +119,6 @@ export const createLeague = args => async (dispatch, getState) => {
 
   const state = getState();
   const { accessToken } = fromRoot.getTokens(state);
-
-  console.log(args);
 
   const query = `
     mutation {

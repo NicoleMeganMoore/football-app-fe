@@ -1,9 +1,8 @@
-import { REHYDRATE } from "redux-persist";
 import _get from "lodash/get";
 import moment from "moment";
 
 import { mySportsFeedRequest } from "../../js/mySportsFeedService";
-import * as fromRoot from "../rootReducer";
+// import * as fromRoot from "../rootReducer";
 
 export const FETCH_SEASON_DETAILS = "FETCH_SEASON_DETAILS";
 export const FETCH_SEASON_DETAILS_SUCCESS = "FETCH_SEASON_DETAILS_SUCCESS";
@@ -37,16 +36,21 @@ export const fetchSeasonDetails = () => (dispatch, getState) => {
 
 export const fetchSeasonSchedule = () => (dispatch, getState) => {
   dispatch({ type: FETCH_SEASON_SCHEDULE });
-
   // axiosInstance
   //   .get(
   //     "https://api.mysportsfeeds.com/v1.2/pull/nfl/current/full_game_schedule.json"
   //   )
   //   .then(response => {
-  //     console.log(response);
   //   })
   //   .catch(error => {
-  //     console.log(error);
+  //   });
+  // axiosInstance
+  //   .get(
+  //     "https://api.mysportsfeeds.com/v1.2/pull/nfl/2019-regular/active_players.json"
+  //   )
+  //   .then(response => {
+  //   })
+  //   .catch(error => {
   //   });
 };
 

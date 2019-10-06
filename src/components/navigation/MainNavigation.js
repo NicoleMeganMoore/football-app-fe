@@ -12,6 +12,8 @@ import {
   getIsFetchingUser
 } from "../../redux/rootReducer";
 
+import { subscribeToLeage } from "../../redux/modules/user";
+
 import { signOutUser } from "../../redux/modules/authentication";
 
 import {
@@ -48,6 +50,7 @@ class MainNavigation extends Component {
       // this.props.fetchLeagues();
       this.props.fetchUserDetails();
       this.props.fetchSeasonDetails();
+      this.props.subscribeToLeage();
     }
   };
 
@@ -193,7 +196,8 @@ export default connect(
     navigateToPlayers,
     navigateToProfile,
     signOutUser,
-    fetchSeasonDetails
+    fetchSeasonDetails,
+    subscribeToLeage
     // fetchLeagues
   }
 )(MainNavigation);

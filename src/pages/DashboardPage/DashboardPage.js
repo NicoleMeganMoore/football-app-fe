@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import _get from "lodash/get";
 import _find from "lodash/find";
 
+import { DraftNowButton } from "../../components/DraftNowButton";
+
 import {
   getLeagues,
   getIsCreatingLeague,
@@ -14,10 +16,7 @@ import {
 } from "../../redux/rootReducer";
 import { createLeague, cancelLeagueInvitation } from "../../redux/modules/user";
 
-import {
-  navigateToLeagues,
-  navigateToDashboard
-} from "../../redux/modules/location";
+import { navigateToLeagues } from "../../redux/modules/location";
 
 import "./DashboardPage.scss";
 
@@ -28,9 +27,7 @@ class DashboardPage extends Component {
       .then(() => {
         this.props.navigateToDashboard();
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(err => {});
   };
 
   renderInvitationPendingContent = league => {
@@ -50,6 +47,8 @@ class DashboardPage extends Component {
   };
 
   renderDraftDayContent = league => {
+    console.log("rendering draft now button");
+    // return <DraftNowButton />;
     return <button className="draftwars-btn">Draft Now!</button>;
   };
 
@@ -67,6 +66,11 @@ class DashboardPage extends Component {
   };
 
   renderLeagueTile = league => {
+    if (!league) {
+      console.log("NO LEAGUE FOUND...");
+      return null;
+    }
+
     const isInvitationPending = league.user_list.length === 1;
     const hasActiveMatch = !!_find(league.matches, {
       week: this.props.currentWeek
@@ -87,6 +91,7 @@ class DashboardPage extends Component {
       <div className="league-tile" key={`league-tile-${league.id}`}>
         <div>{league.league_name}</div>
         {content}
+        {<DraftNowButton />}
       </div>
     );
   };

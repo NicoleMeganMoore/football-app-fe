@@ -53,12 +53,7 @@ class LeagueInvitePage extends Component {
       .then(() => {
         this.props.navigateToDashboard();
       })
-      .catch(error => {
-        console.log(
-          "something went wrong when we tried to add you to that league. Sorry about that...."
-        );
-        console.log(error);
-      });
+      .catch(error => {});
   };
 
   renderInviteMessage = () => {
