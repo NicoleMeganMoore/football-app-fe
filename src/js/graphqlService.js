@@ -22,7 +22,8 @@ const retryOnTokenExpiry = axiosInstance => {
       // Make call to token endpoint to refresh token
       return store
         .dispatch(refreshToken())
-        .then(accessToken => {
+        .then(() => {
+          const accessToken = localStorage.getItem("accessToken");
           const retryConfig = {
             ...config,
             headers: {
@@ -52,7 +53,8 @@ const retryOnTokenExpiry = axiosInstance => {
   });
 };
 
-export const graphqlRequest = async (query, token) => {
+export const graphqlRequest = async query => {
+  const token = localStorage.getItem("accessToken");
   const axiosInstance = axios.create({
     headers: {
       Accept: "application/json",
@@ -69,7 +71,7 @@ export const graphqlRequest = async (query, token) => {
 
   try {
     const response = await axiosInstance.post(
-      "http://localhost:8080/graphql",
+      "http://localhost:3031/graphql",
       JSON.stringify(requestBody)
     );
 

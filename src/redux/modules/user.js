@@ -2,10 +2,8 @@ import { REHYDRATE } from "redux-persist";
 import _get from "lodash/get";
 import _filter from "lodash/filter";
 
-import {
-  graphqlRequest
-  // graphqlSubscribe
-} from "../../js/graphqlService";
+import { graphqlRequest } from "../../js/graphqlService";
+import { subscribe } from "../../graphql/apolloClient";
 
 import * as fromRoot from "../rootReducer";
 
@@ -33,7 +31,29 @@ export const CANCEL_LEAGUE_INVITATION_SUCCESS =
 export const CANCEL_LEAGUE_INVITATION_FAILURE =
   "CANCEL_LEAGUE_INVITATION_FAILURE";
 
-export const subscribeToLeage = () => async (dispatch, getState) => {};
+export const subscribeToLeague = () => async (dispatch, getState) => {
+  const handlers = {
+    next: data => {
+      if (data.data.info === "done") {
+        dispatch({ type: "SUBSCRIPTION JUST DETECTED NEW DATA!!!" });
+        console.log("exiting...");
+        process.exit(0);
+      }
+    },
+    error: error => {
+      dispatch({ type: "SUBSCRIPTION JUST AN ERROR!!!" });
+      console.error(`received error ${error}`);
+    }
+  };
+
+  const query = `subscription {
+    leagueAdded {
+      league_name
+    }
+  }`;
+
+  subscribe(query, handlers);
+};
 
 export const fetchUserDetails = () => async (dispatch, getState) => {
   dispatch({ type: FETCH_USER_DETAILS });

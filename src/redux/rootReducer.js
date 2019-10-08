@@ -76,3 +76,7 @@ export const getIsCreatingLeague = state =>
 // SEASON
 export const getCurrentWeek = state => fromSeason.getCurrentWeek(state.season);
 export const getIsDraftDay = state => fromSeason.getIsDraftDay(state.season);
+export const getNextDraftDay = state =>
+  fromSeason.getNextDraftDay(state.season);
+export const getIsFetchingSeasonDetails = state =>
+  fromSeason.getIsFetchingSeasonDetails(state.season);

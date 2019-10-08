@@ -6,8 +6,6 @@ import { graphqlRequest } from "../../js/graphqlService";
 
 import { navigateToLogin } from "./location";
 
-import * as fromRoot from "../rootReducer";
-
 export const CREATE_USER = "CREATE_USER";
 export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
 export const CREATE_USER_FAILURE = "CREATE_USER_FAILURE";
@@ -56,11 +54,10 @@ export const signInUser = (email, password) => async dispatch => {
   }
 };
 
-export const refreshToken = () => async (dispatch, getState) => {
+export const refreshToken = () => async dispatch => {
   dispatch({ type: REFRESH_TOKEN });
 
-  const state = getState();
-  const { refreshToken } = fromRoot.getTokens(state);
+  const refreshToken = localStorage.getItem("refreshToken");
 
   const query = `
     query {
@@ -77,11 +74,15 @@ export const refreshToken = () => async (dispatch, getState) => {
 
   return graphqlRequest(query)
     .then(response => {
-      dispatch({
-        type: REFRESH_TOKEN_SUCCESS,
-        payload: _get(response, "token")
-      });
-      return Promise.resolve(_get(response, "token.tokens.accessToken"));
+      localStorage.setItem(
+        "accessToken",
+        _get(response, "token.tokens.accessToken")
+      );
+      localStorage.setItem(
+        "refreshToken",
+        _get(response, "token.tokens.refreshToken")
+      );
+      return Promise.resolve();
     })
     .catch(err => {
       dispatch({ type: REFRESH_TOKEN_FAILURE });

@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import { connect } from "react-redux";
-
-import { getIsAuthenticated } from "../../redux/rootReducer";
-
-import { navigateToLogin } from "../../redux/modules/location";
-
 export default ComposedComponent => {
   class Authentication extends Component {
     static propTypes = {
@@ -18,8 +12,9 @@ export default ComposedComponent => {
     };
 
     componentDidMount = () => {
-      if (!this.props.isAuthenticated) {
-        this.props.navigateToLogin();
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        this.props.history.push("/login");
       }
     };
 
@@ -27,13 +22,5 @@ export default ComposedComponent => {
       return <ComposedComponent {...this.props} />;
     };
   }
-
-  const mapStateToProps = state => ({
-    isAuthenticated: getIsAuthenticated(state)
-  });
-
-  return connect(
-    mapStateToProps,
-    { navigateToLogin }
-  )(Authentication);
+  return Authentication;
 };

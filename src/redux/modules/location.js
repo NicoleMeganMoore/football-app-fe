@@ -22,6 +22,10 @@ export const navigateToPlayers = () => dispatch => {
   dispatch(push("/players"));
 };
 
+export const navigateToDraft = () => dispatch => {
+  dispatch(push("/draft"));
+};
+
 export const navigateToProfile = () => dispatch => {
   dispatch(push("/profile"));
 };

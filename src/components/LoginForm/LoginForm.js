@@ -1,29 +1,47 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { signInUser, signOutUser } from "../../redux/modules/authentication";
-import { connect } from "react-redux";
+// import PropTypes from "prop-types";
+
+import { withApollo, Mutation } from "react-apollo";
+import apolloClient from "../../graphql/apolloClient";
+import gql from "graphql-tag";
+// import { useQuery } from "react-apollo-hooks";
 import _get from "lodash/get";
+
+import { history } from "../../App";
 
 import { MdPerson, MdLock } from "react-icons/md";
 import { GiAmericanFootballHelmet } from "react-icons/gi";
 
+// REDUX ----------------------------------------------------------------------
+// import { connect } from "react-redux";
+// import { signInUser, signOutUser } from "../../redux/modules/authentication";
+// import {
+//   navigateToDashboard,
+//   navigateToRegister
+// } from "../../redux/modules/location";
+// REDUX ----------------------------------------------------------------------
+
 import { FancyButton } from "../FancyButton";
-
-import { getIsSigningIn } from "../../redux/rootReducer";
-
-import {
-  navigateToDashboard,
-  navigateToRegister
-} from "../../redux/modules/location";
-
 import "./LoginForm.scss";
 
+const LOGIN_MUTATION = gql`
+  mutation LoginQuery($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      tokens {
+        accessToken
+        refreshToken
+      }
+      userId
+      tokenExpiration
+    }
+  }
+`;
+
 class LoginForm extends Component {
-  static propTypes = {
-    isSigningIn: PropTypes.bool.isRequired
-  };
+  static propTypes = {};
 
   state = {
+    isSigningIn: false,
     emailInput: "",
     passwordInput: "",
     emailError: "",
@@ -64,22 +82,41 @@ class LoginForm extends Component {
     return undefined;
   };
 
-  loginUser = () => {
+  loginUser = async mutate => {
+    apolloClient.resetStore();
+    this.setState({ isSigningIn: true });
     const { emailInput, passwordInput, emailError, passwordError } = this.state;
 
     if (emailError || passwordError) {
       return;
     }
 
-    this.props
-      .signInUser(emailInput, passwordInput)
-      .then(() => {
-        this.props.navigateToDashboard();
-      })
-      .catch(errorMessage => {
-        this.setState({ error: errorMessage });
+    try {
+      // Query using graphql
+      const response = await mutate({
+        variables: {
+          email: emailInput,
+          password: passwordInput
+        }
       });
-    return false;
+
+      localStorage.setItem(
+        "accessToken",
+        _get(response, "data.login.tokens.accessToken")
+      );
+      localStorage.setItem(
+        "refreshToken",
+        _get(response, "data.login.tokens.refreshToken")
+      );
+
+      this.setState({ isSigningIn: false });
+      history.push("/dashboard");
+    } catch (err) {
+      this.setState({
+        isSigningIn: false,
+        loginError: _get(err, "graphQLErrors[0].message")
+      });
+    }
   };
 
   render = () => {
@@ -88,105 +125,97 @@ class LoginForm extends Component {
       passwordInput,
       emailError,
       passwordError,
-      error
+      loginError
     } = this.state;
 
     return (
-      <form
-        className="login-form-container"
-        onSubmit={e => {
-          e.preventDefault();
-          this.loginUser();
-        }}
-      >
-        <GiAmericanFootballHelmet className="signup-signin-logo" />
-        <h2>Log In</h2>
-
-        {error && <div className="signin-error-message">{error}</div>}
-
-        <div className="signin-signup-input-container">
-          <input
-            ref={ref => (this.emailRef = ref)}
-            id="login-email-input"
-            className="signin-signup-input"
-            type="text"
-            value={emailInput}
-            placeholder="email"
-            onChange={e =>
-              this.setState({
-                emailInput: e.target.value,
-                emailError: this.getEmailError(e.target.value)
-              })
-            }
-          />
-          <MdPerson className="input-icon" />
-          {emailError && (
-            <div
-              data-test="input-validation-error"
-              className="input-validation-error"
-            >
-              {emailError}
-            </div>
-          )}
-        </div>
-
-        <div className="signin-signup-input-container">
-          <input
-            ref={ref => (this.passwordRef = ref)}
-            id="login-password-input"
-            className="signin-signup-input"
-            type="password"
-            placeholder="password"
-            value={passwordInput}
-            onChange={e =>
-              this.setState({
-                passwordInput: e.target.value,
-                passwordError: this.getPasswordError(e.target.value)
-              })
-            }
-          />
-          <MdLock className="input-icon" />
-          {passwordError && (
-            <div
-              data-test="input-validation-error"
-              className="input-validation-error"
-            >
-              {passwordError}
-            </div>
-          )}
-        </div>
-
-        <FancyButton
-          className="signin-signup-button"
-          data-test="form-submit-button"
-          loading={this.props.isSigningIn}
-        >
-          Log In
-        </FancyButton>
-
-        <div>
-          <button
-            onClick={this.props.navigateToRegister}
-            className="signup-signin-link"
+      <Mutation mutation={LOGIN_MUTATION}>
+        {mutate => (
+          <form
+            className="login-form-container"
+            onSubmit={async e => {
+              e.preventDefault();
+              this.loginUser(mutate);
+            }}
           >
-            SIGN UP
-          </button>
-        </div>
-      </form>
+            <GiAmericanFootballHelmet className="signup-signin-logo" />
+            <h2>Log In</h2>
+
+            {loginError && (
+              <div className="signin-error-message">{loginError}</div>
+            )}
+
+            <div className="signin-signup-input-container">
+              <input
+                ref={ref => (this.emailRef = ref)}
+                id="login-email-input"
+                className="signin-signup-input"
+                type="text"
+                value={emailInput}
+                placeholder="email"
+                onChange={e =>
+                  this.setState({
+                    emailInput: e.target.value,
+                    emailError: this.getEmailError(e.target.value)
+                  })
+                }
+              />
+              <MdPerson className="input-icon" />
+              {emailError && (
+                <div
+                  data-test="input-validation-error"
+                  className="input-validation-error"
+                >
+                  {emailError}
+                </div>
+              )}
+            </div>
+
+            <div className="signin-signup-input-container">
+              <input
+                ref={ref => (this.passwordRef = ref)}
+                id="login-password-input"
+                className="signin-signup-input"
+                type="password"
+                placeholder="password"
+                value={passwordInput}
+                onChange={e =>
+                  this.setState({
+                    passwordInput: e.target.value,
+                    passwordError: this.getPasswordError(e.target.value)
+                  })
+                }
+              />
+              <MdLock className="input-icon" />
+              {passwordError && (
+                <div
+                  data-test="input-validation-error"
+                  className="input-validation-error"
+                >
+                  {passwordError}
+                </div>
+              )}
+            </div>
+            <FancyButton
+              className="signin-signup-button"
+              data-test="form-submit-button"
+              loading={this.state.isSigningIn}
+            >
+              Log In
+            </FancyButton>
+            <div>
+              <button
+                // onClick={this.props.navigateToRegister}
+                className="signup-signin-link"
+              >
+                SIGN UP
+              </button>
+            </div>
+          </form>
+        )}
+      </Mutation>
     );
   };
 }
 
-const mapStateToProps = state => ({
-  isSigningIn: getIsSigningIn(state)
-});
-
-export default connect(
-  mapStateToProps,
-  {
-    signInUser,
-    signOutUser,
-    navigateToDashboard,
-    navigateToRegister
-  }
-)(LoginForm);
+export default withApollo(LoginForm);

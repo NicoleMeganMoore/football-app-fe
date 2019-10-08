@@ -78,10 +78,16 @@ export default (state = defaultState, action) => {
       const currentWeek = moment().diff(seasonStartTuesday, "week") + 1;
 
       const isDraftDay = moment().weekday() === 2 || moment().weekday() === 3;
+      const nextDraftDay = moment()
+        .day(2 + 7)
+        // .tz("America/New_York")
+        .startOf("day");
+      // .unix();
 
       return {
         ...state,
         isDraftDay,
+        nextDraftDay,
         currentWeek,
         seasonStart: seasonDetails.startDate,
         seasonEnd: seasonDetails.endDate,
@@ -113,3 +119,6 @@ export default (state = defaultState, action) => {
 
 export const getCurrentWeek = state => state.currentWeek;
 export const getIsDraftDay = state => state.isDraftDay;
+export const getNextDraftDay = state => state.nextDraftDay;
+export const getIsFetchingSeasonDetails = state =>
+  state.getIsFetchingSeasonDetails;

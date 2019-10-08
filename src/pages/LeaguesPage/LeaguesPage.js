@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import validator from "email-validator";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Mutation } from "react-apollo";
 
+import { history } from "../../App";
+import { USER_QUERY } from "../../graphql/queries";
+import { CREATE_LEAGUE_MUTATION } from "../../graphql/mutations";
 import { createLeague } from "../../redux/modules/user";
 import { navigateToDashboard } from "../../redux/modules/location";
 
@@ -28,7 +32,7 @@ class LeaguesPage extends Component {
 
   componentDidMount = () => {};
 
-  onNewLeagueSubmit = e => {
+  onNewLeagueSubmit = async (e, mutate) => {
     e.preventDefault();
 
     const isEmailValid = validator.validate(this.state.opponentValue);
@@ -50,10 +54,35 @@ class LeaguesPage extends Component {
         emailError: "Invalid Email"
       });
     } else {
-      this.props
-        .createLeague(this.state)
-        .then(this.props.navigateToDashboard)
-        .catch(error => {});
+      try {
+        await mutate({
+          variables: {
+            leagueInput: {
+              opponent: this.state.opponentValue,
+              pts_per_passing_yd: this.state.pts_per_passing_yd,
+              pts_per_passing_td: this.state.pts_per_passing_td,
+              pts_per_passing_int: this.state.pts_per_passing_int,
+              pts_per_rushing_yd: this.state.pts_per_rushing_yd,
+              pts_per_rushing_td: this.state.pts_per_rushing_td,
+              pts_per_receiving_yd: this.state.pts_per_receiving_yd,
+              pts_per_receiving_td: this.state.pts_per_receiving_td,
+              pts_per_return_td: this.state.pts_per_return_td,
+              pts_per_two_pt_conversion: this.state.pts_per_two_pt_conversion,
+              pts_per_fumble: this.state.pts_per_fumble,
+              pts_per_reception: this.state.pts_per_reception
+            }
+          }
+        });
+
+        history.push("/dashboard");
+      } catch (err) {
+        console.log(err);
+      }
+
+      // this.props
+      //   .createLeague(this.state)
+      //   .then(this.props.navigateToDashboard)
+      //   .catch(error => {});
     }
   };
 
@@ -74,43 +103,63 @@ class LeaguesPage extends Component {
 
   render = () => {
     return (
-      <div className="leagues-page">
-        <form onSubmit={this.onNewLeagueSubmit}>
-          <h2>Opponent</h2>
-          <div className="league-setting-input-container">
-            <input
-              type="text"
-              placeholder="opponent email"
-              onChange={e => this.setState({ opponentValue: e.target.value })}
-              value={this.state.opponentValue}
-            />
-            {this.state.emailError && (
-              <div className="opponent-input-validation-error">
-                {this.state.emailError}
+      <Mutation
+        mutation={CREATE_LEAGUE_MUTATION}
+        refetchQueries={() => [{ query: USER_QUERY }]}
+        // update={(cache, { data: { createLeague } }) => {
+        //   const { user } = cache.readQuery({ query: USER_QUERY });
+        //   cache.writeQuery({
+        //     query: USER_QUERY,
+        //     data: { user: { leagues: user.leagues.concat([createLeague]) } }
+        //   });
+        // }}
+      >
+        {mutate => (
+          <div className="leagues-page">
+            <form onSubmit={e => this.onNewLeagueSubmit(e, mutate)}>
+              <h2>Opponent</h2>
+              <div className="league-setting-input-container">
+                <input
+                  type="text"
+                  placeholder="opponent email"
+                  onChange={e =>
+                    this.setState({ opponentValue: e.target.value })
+                  }
+                  value={this.state.opponentValue}
+                />
+                {this.state.emailError && (
+                  <div className="opponent-input-validation-error">
+                    {this.state.emailError}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <h2>Point Settings</h2>
-          {this.renderSetting("Passing Yard", "passing_yd", false)}
-          {this.renderSetting("Passing Touchdown", "passing_td", true)}
-          {this.renderSetting("Passing Interception", "passing_int", true)}
-          {this.renderSetting("Rushing Yard", "rushing_yd", false)}
-          {this.renderSetting("Rushing Touchdown", "rushing_td", true)}
-          {this.renderSetting("Receiving Yard", "receiving_yd", false)}
-          {this.renderSetting("Receiving Touchdown", "receiving_td", true)}
-          {this.renderSetting("Return Touchdown", "return_td", true)}
-          {this.renderSetting("2-Pt Conversion", "two_pt_conversion", false)}
-          {this.renderSetting("Fumble", "fumble", true)}
-          {this.renderSetting("Reception", "reception", false)}
+              <h2>Point Settings</h2>
+              {this.renderSetting("Passing Yard", "passing_yd", false)}
+              {this.renderSetting("Passing Touchdown", "passing_td", true)}
+              {this.renderSetting("Passing Interception", "passing_int", true)}
+              {this.renderSetting("Rushing Yard", "rushing_yd", false)}
+              {this.renderSetting("Rushing Touchdown", "rushing_td", true)}
+              {this.renderSetting("Receiving Yard", "receiving_yd", false)}
+              {this.renderSetting("Receiving Touchdown", "receiving_td", true)}
+              {this.renderSetting("Return Touchdown", "return_td", true)}
+              {this.renderSetting(
+                "2-Pt Conversion",
+                "two_pt_conversion",
+                false
+              )}
+              {this.renderSetting("Fumble", "fumble", true)}
+              {this.renderSetting("Reception", "reception", false)}
 
-          <br />
-          <div>
-            <button type="submit" className="">
-              Send Invitation
-            </button>
+              <br />
+              <div>
+                <button type="submit" className="">
+                  Send Invitation
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
+        )}
+      </Mutation>
     );
   };
 }

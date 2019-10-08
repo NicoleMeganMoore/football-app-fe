@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { ToastContainer, Slide } from "react-toastify";
 
 import draftWarsLogoSVG from "../../images/draftwars-logo.svg";
+import apolloClient from "../../graphql/apolloClient";
 
 import {
   getIsAuthenticated,
@@ -12,15 +13,15 @@ import {
   getIsFetchingUser
 } from "../../redux/rootReducer";
 
-import { subscribeToLeage } from "../../redux/modules/user";
+import { subscribeToLeague } from "../../redux/modules/user";
 
 import { signOutUser } from "../../redux/modules/authentication";
 
 import {
   navigateToDashboard,
-  navigateToLogin,
   navigateToLeagues,
   navigateToPlayers,
+  navigateToDraft,
   navigateToProfile
 } from "../../redux/modules/location";
 
@@ -44,14 +45,10 @@ class MainNavigation extends Component {
   };
 
   componentDidMount = () => {
-    if (!this.props.isAuthenticated) {
-      this.props.navigateToLogin();
-    } else {
-      // this.props.fetchLeagues();
-      this.props.fetchUserDetails();
-      this.props.fetchSeasonDetails();
-      this.props.subscribeToLeage();
-    }
+    // this.props.fetchLeagues();
+    // this.props.fetchUserDetails();
+    this.props.fetchSeasonDetails();
+    this.props.subscribeToLeague();
   };
 
   renderSecondaryNavContent = () => {
@@ -89,7 +86,7 @@ class MainNavigation extends Component {
 
   getNavItemClass = page => {
     return `main-navigation__item${
-      page === this.props.location ? " active" : ""
+      this.props.location.includes(page) ? " active" : ""
     }`;
   };
 
@@ -131,21 +128,35 @@ class MainNavigation extends Component {
                 Players
               </button>
             </div>
+            <div className={this.getNavItemClass("/draft")}>
+              <button
+                className="main-navigation__button"
+                onClick={this.props.navigateToDraft}
+              >
+                Draft
+              </button>
+            </div>
           </div>
 
           <div className="main-navigation-right-container">
-            <div className={this.getNavItemClass("/profile")}>
-              <button
-                className="main-navigation__button"
-                onClick={this.props.navigateToProfile}
-              >
-                Profile
-              </button>
-            </div>
+            {
+              // <div className={this.getNavItemClass("/profile")}>
+              //   <button
+              //     className="main-navigation__button"
+              //     onClick={this.props.navigateToProfile}
+              //   >
+              //     Profile
+              //   </button>
+              // </div>
+            }
+
             <div className="main-navigation__item">
               <button
                 className="main-navigation__button"
-                onClick={this.props.signOutUser}
+                onClick={() => {
+                  apolloClient.resetStore();
+                  this.props.signOutUser();
+                }}
               >
                 Log Out
               </button>
@@ -191,13 +202,13 @@ export default connect(
   {
     fetchUserDetails,
     navigateToDashboard,
-    navigateToLogin,
     navigateToLeagues,
     navigateToPlayers,
+    navigateToDraft,
     navigateToProfile,
     signOutUser,
     fetchSeasonDetails,
-    subscribeToLeage
+    subscribeToLeague
     // fetchLeagues
   }
 )(MainNavigation);

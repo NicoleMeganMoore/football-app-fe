@@ -2,6 +2,8 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  font-family: roboto;
+  color: rgb(60, 60, 60);
 }
 
 #root {
@@ -34,4 +36,11 @@ body {
   &:focus {
     border-color: green;
   }
+}
+
+.loading-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

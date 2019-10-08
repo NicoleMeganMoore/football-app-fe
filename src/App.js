@@ -15,6 +15,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LeaguesPage } from "./pages/LeaguesPage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { DraftPage } from "./pages/DraftPage";
 import { LeagueInvitePage } from "./pages/LeagueInvitePage";
 
 import MainNavigation from "./components/navigation/MainNavigation";
@@ -31,7 +32,7 @@ export const { store, persistor } = configureStore(
   browserHistory
 );
 
-const history = syncHistoryWithStore(browserHistory, store, {
+export const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: state => state.router
 });
 
@@ -62,6 +63,8 @@ class App extends Component {
                     <Route path="leagues" component={LeaguesPage} />
                     <Route path="players" component={PlayersPage} />
                     <Route path="profile" component={ProfilePage} />
+                    <Route path="draft" component={DraftPage} />
+                    <Route path="draft/:leagueId" component={DraftPage} />
                     <Route
                       path="invite/:leagueId"
                       component={LeagueInvitePage}

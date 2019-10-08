@@ -1,0 +1,41 @@
+.league-tile-center-content {
+  text-align: center;
+  padding-bottom: 20px;
+
+  &.translucent {
+    opacity: 0.7;
+  }
+}
+
+.league-tile.expand {
+  transform: rotate(0deg);
+  margin-left: auto;
+  transition: transform 0.5s ease;
+}
+.league-tile.expandOpen {
+  transform: rotate(180deg);
+}
+
+.countdown-numbers {
+  font-size: 32px;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+  color: #1d7a90;
+}
+.countdown-text {
+  margin-top: 13px;
+  font-size: 15px;
+  opacity: 0.7;
+  font-family: roboto;
+}
+
+.countdown-label-container {
+  line-height: 10px;
+  .countdown-label {
+    display: inline-block;
+    margin: 0 20px;
+    font-size: 10px;
+    line-height: 10px;
+    color: #1d7a90;
+  }
+}
