@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { signInUser, signOutUser } from "../../redux/modules/authentication";
-import { connect } from "react-redux";
 import { Query } from "react-apollo";
 
 // Lodash
@@ -14,48 +12,22 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { USER_QUERY } from "../../graphql/queries";
 import { LeagueTile } from "../../components/LeagueTile";
 
-import {
-  getIsFetchingSeasonDetails,
-  getNextDraftDay,
-  getCurrentWeek,
-  getIsDraftDay
-} from "../../redux/rootReducer";
-
-import { navigateToLeagues } from "../../redux/modules/location";
-
 import "./DashboardPage.scss";
 
 class DashboardPage extends Component {
-  componentDidMount = () => {
-    // const handlers = {
-    //   next: data => {
-    //     console.log(`received data:`, data);
-    //     if (data.data.info === "done") {
-    //       console.log("exiting...");
-    //       process.exit(0);
-    //     }
-    //   },
-    //   error: error => console.error(`received error ${error}`)
-    // };
-    // const query = `subscription {
-    //   leagueAdded {
-    //     id
-    //     league_name
-    //   }
-    // }`;
-    // subscribe(query, handlers);
-  };
-
-  renderActiveLeagueList = data => {
+  renderActiveLeagueList = (data, refetch) => {
     const leaguesList = _get(data, "user.leagues");
+    const isDraftDay = _get(data, "currentDetails.is_draft_day");
+    const nextDraftDay = _get(data, "currentDetails.next_draft_day");
 
     if (_get(leaguesList, "length")) {
       return leaguesList.map(league => {
         return (
           <LeagueTile
             league={league}
-            isDraftDay={this.props.isDraftDay}
-            nextDraftDay={this.props.nextDraftDay}
+            isDraftDay={isDraftDay}
+            nextDraftDay={nextDraftDay}
+            refetch={refetch}
           />
         );
       });
@@ -69,39 +41,22 @@ class DashboardPage extends Component {
       <Query query={USER_QUERY}>
         {({ loading, error, data, refetch, networkStatus }) => (
           <div className="dashboard-page">
-            {
-              // If no leagues
-              // Show button to start league and invite a friend
-              // Start a head to head league. You can start a league any time and choose
-              // the weeks you want to play
-            }
-            <div className="start-league-btn-container">
-              <h2>Week {this.props.currentWeek}</h2>
-              {
-                // <Button
-                //   className="start-league-btn"
-                //   variant="contained"
-                //   color="secondary"
-                // >
-                //
-                // </Button>
-              }
-
-              <Fab
-                color="primary"
-                aria-label="add"
-                size="small"
-                // variant="extended"
-                onClick={this.props.navigateToLeagues}
-              >
-                <AddIcon
-                // className="start-league-btn-icon"
-                />
-              </Fab>
-            </div>
             {loading && (
-              <div className="loading-container">
+              <div className="loading-container" style={{ height: "80vh" }}>
                 <CircularProgress />
+              </div>
+            )}
+            {_get(data, "currentDetails") && (
+              <div className="start-league-btn-container">
+                <h2>Week {_get(data, "currentDetails.current_week")}</h2>
+                <Fab
+                  color="primary"
+                  aria-label="add"
+                  size="small"
+                  onClick={this.props.navigateToLeagues}
+                >
+                  <AddIcon />
+                </Fab>
               </div>
             )}
             {_get(data, "user.leagues") &&
@@ -113,18 +68,4 @@ class DashboardPage extends Component {
   };
 }
 
-const mapStateToProps = state => ({
-  currentWeek: getCurrentWeek(state),
-  isDraftDay: getIsDraftDay(state),
-  nextDraftDay: getNextDraftDay(state),
-  isFetchingSeasonDetails: getIsFetchingSeasonDetails(state)
-});
-
-export default connect(
-  mapStateToProps,
-  {
-    signInUser,
-    signOutUser,
-    navigateToLeagues
-  }
-)(DashboardPage);
+export default DashboardPage;

@@ -1,9 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Subscription, Query } from "react-apollo";
 
+import Button from "@material-ui/core/Button";
 import _get from "lodash/get";
 
+import { LEAGUE_QUERY, USER_QUERY } from "../../graphql/queries";
+import { DRAFT_UPDATED_SUBSCRIPTION } from "../../graphql/subscriptions";
+
 import "./DraftPage.css";
+import { CircularProgress } from "@material-ui/core";
 
 class DraftPage extends Component {
   componentDidMount = () => {};
@@ -13,7 +19,7 @@ class DraftPage extends Component {
     const leagueId = _get(this.props, "params.leagueId");
 
     if (leagueId) {
-      return <Draft leagueId={leagueId} />;
+      return <Draft leagueId={Number(leagueId)} />;
     }
 
     return (
@@ -31,12 +37,138 @@ class DraftPage extends Component {
   };
 }
 
+const renderActiveDraft = (data, user) => {
+  const firstPlayer = _get(data, "league.draftStatus.firstPlayer");
+  const activePlayer = _get(data, "league.draftStatus.activePlayer");
+  console.log("first player");
+  console.log(firstPlayer);
+  if (!activePlayer) {
+    return (
+      // <Mutation mutation={START_DRAFT_MUTATION}>
+      // </Mutation>
+      <div>
+        The player who gets to go first is.......
+        {firstPlayer.email === _get(user, "user.email")
+          ? "YOU!"
+          : firstPlayer.email}
+        {_get(user, "user.email") === firstPlayer.email && (
+          <div>
+            <Button color="primary" onClick={() => {}}>
+              Click here
+            </Button>{" "}
+            to make your first pick
+          </div>
+        )}
+      </div>
+    );
+  } else if (activePlayer && activePlayer.email === _get(user, "user.email")) {
+    return <div>It's your turn!! Who you gon pick?</div>;
+  } else if (activePlayer) {
+    return (
+      <div>
+        {activePlayer.first_name} is taking their turn. They have however many
+        minutes left
+      </div>
+    );
+  }
+  return JSON.stringify(_get(data, "league.draftStatus"));
+};
+
+const renderDraftContent = ({
+  loading,
+  error,
+  data,
+  queryLoading,
+  queryData,
+  queryError,
+  userData
+}) => {
+  if (queryLoading) {
+    return (
+      <div className="loading-container">
+        <CircularProgress />
+      </div>
+    );
+  } else if (_get(queryData, "league.draftStatus.draftInProgress")) {
+    // ready to draft but still initial subscription state
+    return renderActiveDraft(queryData, userData);
+    // } else if (_get(draftStatus, "draftInProgress")) {
+    //   return renderActiveDraft(data);
+    // } else if (_get(data, "readyToDraft")) {
+    //   // not the initial subscription state, display subscription data from now on
+    //   return <div className="loading-container">Waiting for all players...</div>;
+  } else if (_get(queryData, "league")) {
+    return <div className="loading-container">Waiting for all players...</div>;
+  } else if (queryError) {
+    return JSON.stringify(error);
+  }
+
+  return "something went wrong and there was nothing to return from the subscription";
+};
+
 const Draft = ({ leagueId }) => {
   return (
-    <div>
-      <div>Drafting for league id: {leagueId}</div>
-      <div>WAITING FOR YOUR OPPONENT!!!</div>
-    </div>
+    <Query query={USER_QUERY}>
+      {({ loading: userLoading, data: userData, error: userError }) => (
+        <Query query={LEAGUE_QUERY} variables={{ league_id: leagueId }}>
+          {({
+            loading: queryLoading,
+            data: queryData,
+            error: queryError,
+            subscribeToMore
+          }) => {
+            console.log("subscribe to more function");
+            console.log(subscribeToMore);
+            subscribeToMore({
+              document: DRAFT_UPDATED_SUBSCRIPTION,
+              variables: { leagueId: leagueId },
+              updateQuery: (prev, data) => {
+                console.log(data);
+                if (!data) {
+                  console.log("no changes ");
+                  return prev;
+                }
+                console.log(data);
+              }
+            });
+
+            if (queryLoading) console.log("loading");
+            return (
+              <div>
+                {renderDraftContent({
+                  // loading,
+                  // error,
+                  // data,
+                  userData,
+                  queryLoading,
+                  queryData,
+                  queryError
+                })}
+              </div>
+            );
+            // (
+            //   <Subscription
+            //     subscription={DRAFT_UPDATED_SUBSCRIPTION}
+            //     variables={{ leagueId: leagueId }}
+            //   >
+            //     {({ loading, error, data }) => (
+            //       <div>
+            //         {renderDraftContent({
+            //           loading,
+            //           error,
+            //           data,
+            //           queryLoading,
+            //           queryData,
+            //           queryError
+            //         })}
+            //       </div>
+            //     )}
+            //   </Subscription>
+            // );
+          }}
+        </Query>
+      )}
+    </Query>
   );
 };
 

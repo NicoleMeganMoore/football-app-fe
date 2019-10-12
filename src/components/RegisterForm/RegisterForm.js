@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
 import { MdPerson, MdLock } from "react-icons/md";
 import { GiAmericanFootballHelmet } from "react-icons/gi";
 
+import { history } from "../../App";
 import { FancyButton } from "../FancyButton";
-
 import { createUser, signInUser } from "../../redux/modules/authentication";
 
 import {
@@ -298,7 +297,7 @@ class RegisterForm extends Component {
 
         <div>
           <button
-            onClick={this.props.navigateToLogin}
+            onClick={() => history.push("/login")}
             className="signup-signin-link"
           >
             LOG IN

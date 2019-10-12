@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import _find from "lodash/find";
 import { Mutation } from "react-apollo";
 import ReactMomentCountDown from "react-moment-countdown";
+import moment from "moment";
 
 import { history } from "../../App";
 
@@ -23,7 +24,10 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 // GraphQL
 import { USER_QUERY } from "../../graphql/queries";
-import { CANCEL_LEAGUE_INVITATION_MUTATION } from "../../graphql/mutations";
+import {
+  CANCEL_LEAGUE_INVITATION_MUTATION,
+  READY_TO_DRAFT_MUTATION
+} from "../../graphql/mutations";
 
 import "./LeagueTile.scss";
 
@@ -60,8 +64,12 @@ class LeagueTile extends Component {
       content = <DraftDayContent league={league} />;
     } else if (!hasActiveMatch && !this.props.isDraftDay) {
       content = (
-        <DraftCountdownContent nextDraftDay={this.props.nextDraftDay} />
+        <DraftCountdownContent
+          nextDraftDay={this.props.nextDraftDay}
+          refetch={this.props.refetch}
+        />
       );
+      content = <DraftDayContent league={league} />;
     }
 
     return (
@@ -196,13 +204,15 @@ export const ExpandedContent = ({ league }) => {
   );
 };
 
-export const DraftCountdownContent = ({ nextDraftDay }) => {
+export const DraftCountdownContent = ({ nextDraftDay, refetch }) => {
+  const toDate = moment.unix(nextDraftDay);
   return (
     <div className="league-tile-center-content">
       <div className="countdown-numbers">
         <ReactMomentCountDown
-          toDate={nextDraftDay}
+          toDate={toDate}
           targetFormatMask="DD:HH:mm:ss"
+          onCountdownEnd={refetch}
         />
       </div>
       <div className="countdown-label-container">
@@ -223,18 +233,23 @@ export const DraftDayContent = ({ league }) => {
         {
           // <div>It's draft day! Get it.</div>
         }
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={() => {
-            history.push(`/draft/${league.id}`);
-          }}
-          // className={classes.button}
-          // startIcon={<CloudUploadIcon />}
-        >
-          Draft Now!
-        </Button>
+        <Mutation mutation={READY_TO_DRAFT_MUTATION}>
+          {mutate => (
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={async () => {
+                await mutate({ variables: { leagueId: Number(league.id) } });
+                history.push(`/draft/${league.id}`);
+              }}
+              // className={classes.button}
+              // startIcon={<CloudUploadIcon />}
+            >
+              Draft Now!
+            </Button>
+          )}
+        </Mutation>
       </Typography>
     </div>
   );

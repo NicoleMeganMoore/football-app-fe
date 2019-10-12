@@ -12,10 +12,10 @@ const wsLink = new WebSocketLink({
   uri: `ws://localhost:3031/graphql`,
   options: {
     reconnect: true,
-    timeout: 60000
-    // connectionParams: {
-    //   authToken: localStorage.getItem(AUTH_TOKEN),
-    // }
+    timeout: 60000,
+    connectionParams: {
+      authToken: getAuthToken()
+    }
   }
 });
 

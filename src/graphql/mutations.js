@@ -6,6 +6,44 @@ export const CANCEL_LEAGUE_INVITATION_MUTATION = gql`
   }
 `;
 
+export const NOT_READY_TO_DRAFT_MUTATION = gql`
+  mutation NotReadyToDraft($leagueId: Int!) {
+    notReadyToDraft(leagueId: $leagueId) {
+      id
+    }
+  }
+`;
+
+export const READY_TO_DRAFT_MUTATION = gql`
+  mutation ReadyToDraft($leagueId: Int!) {
+    readyToDraft(leagueId: $leagueId) {
+      id
+      draftStatus {
+        draftInProgress
+        firstPlayer {
+          id
+          first_name
+          last_name
+          email
+        }
+        nextTurn
+        activePlayer {
+          id
+          first_name
+          last_name
+          email
+        }
+        readyToDraft {
+          id
+          email
+          first_name
+          last_name
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_LEAGUE_MUTATION = gql`
   mutation CreateLeague($leagueInput: LeagueInput!) {
     createLeague(leagueInput: $leagueInput) {

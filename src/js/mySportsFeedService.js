@@ -1,11 +1,11 @@
 import axios from "axios";
 // import _get from "lodash/get";
 
-export const mySportsFeedRequest = url => {
+export const mySportsFeedRequest = (url, version) => {
   const axiosInstance = axios.create({
     auth: {
-      username: "3216d5f7-36cd-4fa7-b35e-20b3a0",
-      password: "password"
+      username: "a248342a-d622-4fdb-b2ce-f5fdc5",
+      password: version === 1 ? "" : "MYSPORTSFEEDS"
     }
   });
 
