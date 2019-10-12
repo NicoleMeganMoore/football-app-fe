@@ -15,7 +15,7 @@ import { LeagueTile } from "../../components/LeagueTile";
 import "./DashboardPage.scss";
 
 class DashboardPage extends Component {
-  renderActiveLeagueList = (data, refetch) => {
+  renderActiveLeagueList = (data, refetch, loading) => {
     const leaguesList = _get(data, "user.leagues");
     const isDraftDay = _get(data, "currentDetails.is_draft_day");
     const nextDraftDay = _get(data, "currentDetails.next_draft_day");
@@ -27,6 +27,7 @@ class DashboardPage extends Component {
             league={league}
             isDraftDay={isDraftDay}
             nextDraftDay={nextDraftDay}
+            loading={loading}
             refetch={refetch}
           />
         );
@@ -60,7 +61,7 @@ class DashboardPage extends Component {
               </div>
             )}
             {_get(data, "user.leagues") &&
-              this.renderActiveLeagueList(data, refetch)}
+              this.renderActiveLeagueList(data, refetch, loading)}
           </div>
         )}
       </Query>

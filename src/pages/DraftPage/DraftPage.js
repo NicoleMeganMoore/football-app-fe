@@ -40,8 +40,6 @@ class DraftPage extends Component {
 const renderActiveDraft = (data, user) => {
   const firstPlayer = _get(data, "league.draftStatus.firstPlayer");
   const activePlayer = _get(data, "league.draftStatus.activePlayer");
-  console.log("first player");
-  console.log(firstPlayer);
   if (!activePlayer) {
     return (
       // <Mutation mutation={START_DRAFT_MUTATION}>
@@ -117,28 +115,19 @@ const Draft = ({ leagueId }) => {
             error: queryError,
             subscribeToMore
           }) => {
-            console.log("subscribe to more function");
-            console.log(subscribeToMore);
             subscribeToMore({
               document: DRAFT_UPDATED_SUBSCRIPTION,
               variables: { leagueId: leagueId },
               updateQuery: (prev, data) => {
-                console.log(data);
                 if (!data) {
-                  console.log("no changes ");
                   return prev;
                 }
-                console.log(data);
               }
             });
 
-            if (queryLoading) console.log("loading");
             return (
               <div>
                 {renderDraftContent({
-                  // loading,
-                  // error,
-                  // data,
                   userData,
                   queryLoading,
                   queryData,
@@ -146,25 +135,6 @@ const Draft = ({ leagueId }) => {
                 })}
               </div>
             );
-            // (
-            //   <Subscription
-            //     subscription={DRAFT_UPDATED_SUBSCRIPTION}
-            //     variables={{ leagueId: leagueId }}
-            //   >
-            //     {({ loading, error, data }) => (
-            //       <div>
-            //         {renderDraftContent({
-            //           loading,
-            //           error,
-            //           data,
-            //           queryLoading,
-            //           queryData,
-            //           queryError
-            //         })}
-            //       </div>
-            //     )}
-            //   </Subscription>
-            // );
           }}
         </Query>
       )}

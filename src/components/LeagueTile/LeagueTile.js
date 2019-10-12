@@ -58,7 +58,7 @@ class LeagueTile extends Component {
     } else if (hasActiveMatch) {
       content = <ActiveMatchSummary league={league} />;
       expandedContent = <ExpandedContent league={league} />;
-    } else if (this.props.isFetchingSeasonDetails) {
+    } else if (this.props.loading) {
       content = <CircularProgress />;
     } else if (!hasActiveMatch && this.props.isDraftDay) {
       content = <DraftDayContent league={league} />;

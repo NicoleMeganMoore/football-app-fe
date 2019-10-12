@@ -78,11 +78,6 @@ class LeaguesPage extends Component {
       } catch (err) {
         console.log(err);
       }
-
-      // this.props
-      //   .createLeague(this.state)
-      //   .then(this.props.navigateToDashboard)
-      //   .catch(error => {});
     }
   };
 
