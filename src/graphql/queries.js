@@ -42,7 +42,7 @@ export const PLAYERS_QUERY = gql`
 `;
 
 export const LEAGUE_QUERY = gql`
-  query League($league_id: Int!) {
+  query League($league_id: String!) {
     league(league_id: $league_id) {
       _id
       id

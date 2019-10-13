@@ -104,7 +104,7 @@ class LeagueTile extends Component {
                   >
                     <MenuItem
                       onClick={async () => {
-                        mutate({ variables: { leagueId: `${league.id}` } });
+                        mutate({ variables: { leagueId: league.id } });
                         this.closeSettingsMenu();
                       }}
                     >

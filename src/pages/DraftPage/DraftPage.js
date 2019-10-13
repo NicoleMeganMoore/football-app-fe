@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Subscription, Query } from "react-apollo";
+import { Mutation, Query } from "react-apollo";
 
 import Button from "@material-ui/core/Button";
 import _get from "lodash/get";
 
 import { LEAGUE_QUERY, USER_QUERY } from "../../graphql/queries";
+import { START_DRAFT_MUTATION } from "../../graphql/mutations";
 import { DRAFT_UPDATED_SUBSCRIPTION } from "../../graphql/subscriptions";
 
 import "./DraftPage.css";
@@ -40,24 +41,37 @@ class DraftPage extends Component {
 const renderActiveDraft = (data, user) => {
   const firstPlayer = _get(data, "league.draftStatus.firstPlayer");
   const activePlayer = _get(data, "league.draftStatus.activePlayer");
-  if (!activePlayer) {
+
+  console.log(data);
+  if (!firstPlayer) {
+    return <div>Determine first player!</div>;
+  }
+  if (firstPlayer && !activePlayer) {
+    console.log("no active player. Rendering mutation wrapper");
     return (
-      // <Mutation mutation={START_DRAFT_MUTATION}>
-      // </Mutation>
-      <div>
-        The player who gets to go first is.......
-        {firstPlayer.email === _get(user, "user.email")
-          ? "YOU!"
-          : firstPlayer.email}
-        {_get(user, "user.email") === firstPlayer.email && (
+      <Mutation mutation={START_DRAFT_MUTATION}>
+        {mutate => (
           <div>
-            <Button color="primary" onClick={() => {}}>
-              Click here
-            </Button>{" "}
-            to make your first pick
+            The player who gets to go first is.......
+            {firstPlayer.email === _get(user, "user.email")
+              ? "YOU!"
+              : firstPlayer.email}
+            {_get(user, "user.email") === firstPlayer.email && (
+              <div>
+                <Button
+                  color="primary"
+                  onClick={() =>
+                    mutate({ variables: { leagueId: _get(data, "league.id") } })
+                  }
+                >
+                  Click here
+                </Button>{" "}
+                to make your first pick
+              </div>
+            )}
           </div>
         )}
-      </div>
+      </Mutation>
     );
   } else if (activePlayer && activePlayer.email === _get(user, "user.email")) {
     return <div>It's your turn!! Who you gon pick?</div>;
@@ -109,12 +123,13 @@ const Draft = ({ leagueId }) => {
     <Query query={USER_QUERY}>
       {({ loading: userLoading, data: userData, error: userError }) => (
         <Query query={LEAGUE_QUERY} variables={{ league_id: leagueId }}>
-          {({
-            loading: queryLoading,
-            data: queryData,
-            error: queryError,
-            subscribeToMore
-          }) => {
+          {props => {
+            const {
+              loading: queryLoading,
+              data: queryData,
+              error: queryError,
+              subscribeToMore
+            } = props;
             subscribeToMore({
               document: DRAFT_UPDATED_SUBSCRIPTION,
               variables: { leagueId: leagueId },
@@ -124,7 +139,6 @@ const Draft = ({ leagueId }) => {
                 }
               }
             });
-
             return (
               <div>
                 {renderDraftContent({

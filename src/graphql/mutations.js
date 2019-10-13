@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const CANCEL_LEAGUE_INVITATION_MUTATION = gql`
-  mutation CancelLeagueInvitation($leagueId: String!) {
+  mutation CancelLeagueInvitation($leagueId: Int!) {
     cancelLeagueInvitation(leagueId: $leagueId)
   }
 `;
@@ -9,6 +9,14 @@ export const CANCEL_LEAGUE_INVITATION_MUTATION = gql`
 export const NOT_READY_TO_DRAFT_MUTATION = gql`
   mutation NotReadyToDraft($leagueId: Int!) {
     notReadyToDraft(leagueId: $leagueId) {
+      id
+    }
+  }
+`;
+
+export const START_DRAFT_MUTATION = gql`
+  mutation StartDraft($leagueId: Int!) {
+    startDraft(leagueId: $leagueId) {
       id
     }
   }
@@ -40,6 +48,14 @@ export const READY_TO_DRAFT_MUTATION = gql`
           last_name
         }
       }
+    }
+  }
+`;
+
+export const ACCEPT_LEAGUE_INVITATION_MUTATION = gql`
+  mutation AcceptLeagueInvitation($leagueId: ID!) {
+    addUserToLeague(leagueId: $leagueId) {
+      id
     }
   }
 `;

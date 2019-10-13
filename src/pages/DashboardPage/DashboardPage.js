@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Query } from "react-apollo";
+import { history } from "../../App";
 
 // Lodash
 import _get from "lodash/get";
@@ -54,7 +55,7 @@ class DashboardPage extends Component {
                   color="primary"
                   aria-label="add"
                   size="small"
-                  onClick={this.props.navigateToLeagues}
+                  onClick={() => history.push("/leagues")}
                 >
                   <AddIcon />
                 </Fab>

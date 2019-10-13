@@ -1,65 +1,34 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
+import { Query, Mutation } from "react-apollo";
 import _get from "lodash/get";
 import _find from "lodash/find";
 
-import {
-  fetchLeagueById,
-  acceptLeagueInvitation
-} from "../../redux/modules/user";
+import { history } from "../../App";
+import { LEAGUE_QUERY, USER_QUERY } from "../../graphql/queries";
+import { ACCEPT_LEAGUE_INVITATION_MUTATION } from "../../graphql/mutations";
 
 import "./LeagueInvitePage.css";
-import { getUser } from "../../redux/rootReducer";
 
 class LeagueInvitePage extends Component {
-  state = {
-    isCheckingUser: true,
-    isAuthorized: false,
-    alreadyAccepted: false
-  };
+  state = {};
 
-  componentDidMount = () => {
-    const leagueId = _get(this.props.params, "leagueId");
+  renderInviteMessage = ({
+    data,
+    loading,
+    error,
+    userData,
+    userLoading,
+    userError
+  }) => {
+    const userEmail = _get(userData, "user.email");
+    const userList = _get(data, "league.user_list", []);
+    const opponentEmail = _get(data, "league.opponent");
 
-    this.props
-      .fetchLeagueById(leagueId)
-      .then(league => {
-        const userEmail = _get(this.props.user, "email");
-        const userList = _get(league, "user_list", []);
-        if (_find(userList, { email: userEmail })) {
-          // This person is authorized but has already accepted the invitation
-          return this.setState({
-            isCheckingUser: false,
-            isAuthorized: true,
-            alreadyAccepted: true
-          });
-        }
-        // This person is authorized and hasnt accepted yet
-        return this.setState({
-          isCheckingUser: false,
-          isAuthorized: true,
-          league: league
-        });
-      })
-      .catch(() => {
-        // This person is not authorized to view this link
-        this.setState({ isCheckingUser: false, isAuthorized: false });
-      });
-  };
-
-  onAcceptClick = () => {
-    this.props
-      .acceptLeagueInvitation(_get(this.props.params, "leagueId"))
-      .then(() => {
-        this.props.navigateToDashboard();
-      })
-      .catch(error => {});
-  };
-
-  renderInviteMessage = () => {
-    if (this.state.isCheckingUser) {
+    if (loading || userLoading) {
       return <div>Loading...</div>;
-    } else if (!this.state.isAuthorized) {
+    } else if (_find(userList, { email: userEmail })) {
+      return <div>You are already part of this league.</div>;
+    } else if (userEmail !== opponentEmail) {
       return (
         <div>
           <h1>
@@ -68,34 +37,62 @@ class LeagueInvitePage extends Component {
           </h1>
         </div>
       );
-    } else if (this.state.alreadyAccepted) {
-      return <div>You have already accepted this invitation</div>;
     }
     return (
-      <div>
-        <h1>
-          You've been invited to {_get(this.state.league, "league_name")}
-          <button className="draftwars-btn" onClick={this.onAcceptClick}>
-            Accept invitation
-          </button>
-        </h1>
-      </div>
+      <Mutation mutation={ACCEPT_LEAGUE_INVITATION_MUTATION}>
+        {mutate => (
+          <div>
+            <h1>
+              You've been invited to {_get(data, "league.league_name")}
+              <button
+                className="draftwars-btn"
+                onClick={async () => {
+                  try {
+                    await mutate({
+                      variables: {
+                        leagueId: _get(this.props.params, "leagueId")
+                      }
+                    });
+                    history.push("/dashboard");
+                  } catch (error) {
+                    this.setState({ leagueAcceptError: error });
+                  }
+                }}
+              >
+                Accept invitation
+              </button>
+            </h1>
+          </div>
+        )}
+      </Mutation>
     );
   };
 
   render = () => {
-    return <div className="dashboard-page">{this.renderInviteMessage()}</div>;
+    return (
+      <Query query={USER_QUERY}>
+        {({ loading: userLoading, data: userData, error: userError }) => (
+          <Query
+            query={LEAGUE_QUERY}
+            variables={{ league_id: _get(this.props.params, "leagueId") }}
+          >
+            {({ data, loading, error }) => (
+              <div className="dashboard-page">
+                {this.renderInviteMessage({
+                  data,
+                  loading,
+                  error,
+                  userData,
+                  userLoading,
+                  userError
+                })}
+              </div>
+            )}
+          </Query>
+        )}
+      </Query>
+    );
   };
 }
 
-const mapStateToProps = state => ({
-  user: getUser(state)
-});
-
-export default connect(
-  mapStateToProps,
-  {
-    fetchLeagueById,
-    acceptLeagueInvitation
-  }
-)(LeagueInvitePage);
+export default LeagueInvitePage;
