@@ -10,6 +10,7 @@ import { execute } from "apollo-link";
 import { refreshTokenRequest } from "./refreshToken";
 import gql from "graphql-tag";
 import _find from "lodash/find";
+import _get from "lodash/get";
 
 const promiseToObservable = promise =>
   new Observable(subscriber => {
@@ -49,6 +50,13 @@ const wsLink = new WebSocketLink({
   options: {
     reconnect: true,
     timeout: 60000,
+    connectionCallback: function(error) {
+      if (_get(error, "message") === "UNAUTHENTICATED") {
+        this.client.close();
+        this.connectionParams.authToken = getAuthToken();
+        // Socket will reconnect automatically
+      }
+    },
     connectionParams: {
       authToken: getAuthToken()
     }
