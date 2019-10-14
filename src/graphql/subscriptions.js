@@ -22,6 +22,7 @@ export const DRAFT_UPDATED_SUBSCRIPTION = gql`
           email
         }
         nextTurn
+        roundNumber
         activePlayer {
           id
           first_name

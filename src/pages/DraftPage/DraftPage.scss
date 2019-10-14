@@ -1,0 +1,67 @@
+@import url("https://fonts.googleapis.com/css?family=Exo&display=swap");
+
+.draft-turn-countdown {
+  font-size: 70px;
+  font-weight: 900;
+  font-family: "Exo", sans-serif;
+  text-align: center;
+}
+
+.draft-top-container {
+  display: flex;
+  height: 140px;
+
+  .draft-top-left-container {
+    width: 212px;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+  .draft-top-right-container {
+    width: 100%;
+    padding-bottom: 20px;
+  }
+  .round-text-container {
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-family: roboto;
+    text-align: center;
+  }
+  .summary-container {
+    display: flex;
+  }
+}
+
+.active-player-placeholder {
+  text-align: center;
+  line-height: 115px;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.summary-player-avatar {
+  width: 110px !important;
+  height: 110px !important;
+  margin-left: 25px;
+}
+
+.summary-player-name {
+  margin-top: 8px;
+  font-size: 30px;
+}
+
+.summary-player-desc {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.selected-player-details {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.drafted-teams-container {
+  margin-top: 20px;
+  height: 500px;
+  padding: 20px;
+  box-sizing: border-box;
+}

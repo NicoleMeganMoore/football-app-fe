@@ -42,7 +42,7 @@ export const PLAYERS_QUERY = gql`
 `;
 
 export const LEAGUE_QUERY = gql`
-  query League($league_id: String!) {
+  query League($league_id: Int!) {
     league(league_id: $league_id) {
       _id
       id
@@ -63,6 +63,7 @@ export const LEAGUE_QUERY = gql`
           email
         }
         nextTurn
+        roundNumber
         activePlayer {
           id
           first_name

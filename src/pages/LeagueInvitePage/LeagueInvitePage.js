@@ -50,7 +50,7 @@ class LeagueInvitePage extends Component {
                   try {
                     await mutate({
                       variables: {
-                        leagueId: _get(this.props.params, "leagueId")
+                        leagueId: Number(_get(this.props.params, "leagueId"))
                       }
                     });
                     history.push("/dashboard");
@@ -74,7 +74,9 @@ class LeagueInvitePage extends Component {
         {({ loading: userLoading, data: userData, error: userError }) => (
           <Query
             query={LEAGUE_QUERY}
-            variables={{ league_id: _get(this.props.params, "leagueId") }}
+            variables={{
+              league_id: Number(_get(this.props.params, "leagueId"))
+            }}
           >
             {({ data, loading, error }) => (
               <div className="dashboard-page">

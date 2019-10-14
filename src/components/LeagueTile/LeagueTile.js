@@ -71,6 +71,7 @@ class LeagueTile extends Component {
       );
       content = <DraftDayContent league={league} />;
     }
+    expandedContent = <ExpandedContent league={league} />;
 
     return (
       <Card className="league-tile" key={`league-tile-${league.id}`}>
@@ -240,8 +241,12 @@ export const DraftDayContent = ({ league }) => {
               color="primary"
               size="large"
               onClick={async () => {
-                await mutate({ variables: { leagueId: Number(league.id) } });
-                history.push(`/draft/${league.id}`);
+                try {
+                  await mutate({ variables: { leagueId: Number(league.id) } });
+                  history.push(`/draft/${league.id}`);
+                } catch (error) {
+                  this.setState({ readyToDraftError: error });
+                }
               }}
               // className={classes.button}
               // startIcon={<CloudUploadIcon />}

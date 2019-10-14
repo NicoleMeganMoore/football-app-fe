@@ -35,6 +35,7 @@ export const READY_TO_DRAFT_MUTATION = gql`
           email
         }
         nextTurn
+        roundNumber
         activePlayer {
           id
           first_name
@@ -53,7 +54,7 @@ export const READY_TO_DRAFT_MUTATION = gql`
 `;
 
 export const ACCEPT_LEAGUE_INVITATION_MUTATION = gql`
-  mutation AcceptLeagueInvitation($leagueId: ID!) {
+  mutation AcceptLeagueInvitation($leagueId: Int!) {
     addUserToLeague(leagueId: $leagueId) {
       id
     }

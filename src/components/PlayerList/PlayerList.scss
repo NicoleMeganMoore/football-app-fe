@@ -1,0 +1,36 @@
+.player-avatar {
+  width: 35px !important;
+  height: 35px !important;
+  margin-left: 8px;
+}
+
+.player-list-table {
+  border: none;
+
+  .rt-td {
+    align-items: center;
+    justify-content: left;
+    display: flex;
+    border-right: none !important;
+  }
+
+  .rt-th {
+    text-align: left;
+    border-right: none;
+  }
+
+  .rt-tr-group {
+    cursor: pointer;
+    &:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+  }
+}
+
+.player-search-input-container {
+  padding: 20px;
+
+  .player-search-input {
+    width: 100%;
+  }
+}
