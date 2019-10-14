@@ -11,31 +11,31 @@ export const PLAYERS_QUERY = gql`
       position
       team_abbrv
       team_id
-      stats {
-        season_passing_yd
-        season_passing_td
-        season_passing_int
-        season_rushing_yd
-        season_rushing_td
-        season_receiving_yd
-        season_receiving_td
-        season_return_td
-        season_two_pt_made
-        season_two_pt_pass_rec
-        season_fumble
-        season_reception
-        current_passing_yd
-        current_passing_td
-        current_passing_int
-        current_rushing_yd
-        current_rushing_td
-        current_receiving_yd
-        current_receiving_td
-        current_return_td
-        current_two_pt_made
-        current_two_pt_pass_rec
-        current_fumble
-        current_reception
+      season_stats {
+        passing_yd
+        passing_td
+        passing_int
+        rushing_yd
+        rushing_td
+        receiving_yd
+        receiving_td
+        return_td
+        two_pt_made
+        fumble
+        reception
+      }
+      current_stats {
+        passing_yd
+        passing_td
+        passing_int
+        rushing_yd
+        rushing_td
+        receiving_yd
+        receiving_td
+        return_td
+        two_pt_made
+        fumble
+        reception
       }
     }
   }

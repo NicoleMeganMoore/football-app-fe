@@ -35,7 +35,6 @@ class DraftPage extends Component {
         {({ loading, data, error }) => {
           const players = _get(data, "players", []);
           const activePlayer = _find(players, player => player.id === playerId);
-          console.log(activePlayer);
           if (!activePlayer) {
             return null;
           }

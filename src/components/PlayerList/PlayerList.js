@@ -34,29 +34,23 @@ class PlayerList extends React.Component {
     filterInput: ""
   };
 
-  sortData = playerList => {};
-
   getSeasonPointTotal = (stats, settings) => {
-    if (!settings) {
+    if (!settings || !stats) {
       return 0;
     }
 
     const pointArray = [];
-    pointArray.push(stats.season_fumble * settings.pts_per_fumble);
-    pointArray.push(stats.season_passing_int * settings.pts_per_passing_int);
-    pointArray.push(stats.season_passing_td * settings.pts_per_passing_td);
-    pointArray.push(stats.season_passing_yd * settings.pts_per_passing_yd);
-    pointArray.push(stats.season_receiving_td * settings.pts_per_receiving_td);
-    pointArray.push(stats.season_receiving_yd * settings.pts_per_receiving_yd);
-    pointArray.push(stats.season_reception * settings.pts_per_reception);
-    pointArray.push(stats.season_return_td * settings.pts_per_return_td);
-    pointArray.push(stats.season_rushing_td * settings.pts_per_rushing_td);
-    pointArray.push(stats.season_rushing_yd * settings.pts_per_rushing_yd);
-    pointArray.push(stats.season_two_pt_made);
-    // We probably can delete this one
-    // pointArray.push(
-    //   stats.season_two_pt_pass_rec * settings.pts_per_two_pt_conversion
-    // );
+    pointArray.push(stats.fumble * settings.pts_per_fumble);
+    pointArray.push(stats.passing_int * settings.pts_per_passing_int);
+    pointArray.push(stats.passing_td * settings.pts_per_passing_td);
+    pointArray.push(stats.passing_yd * settings.pts_per_passing_yd);
+    pointArray.push(stats.receiving_td * settings.pts_per_receiving_td);
+    pointArray.push(stats.receiving_yd * settings.pts_per_receiving_yd);
+    pointArray.push(stats.reception * settings.pts_per_reception);
+    pointArray.push(stats.return_td * settings.pts_per_return_td);
+    pointArray.push(stats.rushing_td * settings.pts_per_rushing_td);
+    pointArray.push(stats.rushing_yd * settings.pts_per_rushing_yd);
+    pointArray.push(stats.two_pt_made);
 
     const sum = _round(_sum(pointArray), 2);
     return sum;
@@ -66,7 +60,9 @@ class PlayerList extends React.Component {
     const leagueSettings = activeLeague ? activeLeague.settings : null;
     const sortedPlayerList = _sortBy(
       playerList,
-      player => this.getSeasonPointTotal(player.stats, leagueSettings) * -1
+      player =>
+        this.getSeasonPointTotal(_get(player, "season_stats"), leagueSettings) *
+        -1
     );
 
     if (!this.state.filterInput) {
@@ -91,6 +87,7 @@ class PlayerList extends React.Component {
               }
 
               const playerList = _get(data, "players", []);
+
               const activeLeague = _find(
                 _get(userData, "user.leagues", []),
                 league => league.id === Number(this.props.leagueId)
@@ -153,10 +150,10 @@ class PlayerList extends React.Component {
                         {
                           Header: "Total Points",
                           id: "total-points",
-                          accessor: "stats",
+                          accessor: "season_stats",
                           Cell: props => {
                             return (
-                              <span onClick={() => console.log(props.value)}>
+                              <span>
                                 {this.getSeasonPointTotal(
                                   props.value,
                                   activeLeague ? activeLeague.settings : {}
