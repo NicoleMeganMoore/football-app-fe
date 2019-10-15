@@ -3,7 +3,6 @@ import _get from "lodash/get";
 import _filter from "lodash/filter";
 
 import { graphqlRequest } from "../../js/graphqlService";
-import { subscribe } from "../../graphql/apolloClient";
 
 import * as fromRoot from "../rootReducer";
 

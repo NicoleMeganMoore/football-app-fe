@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import ReactTable from "react-table";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -57,20 +56,43 @@ class PlayerList extends React.Component {
   };
 
   filterData = (playerList, activeLeague) => {
+    const gamesPlayedFiltered = this.filterDataByGamesPlayed(playerList);
+    const hasTeamFiltered = this.filterDataByHasTeam(gamesPlayedFiltered);
+    const searchInputFiltered = this.filterDataBySearchInput(hasTeamFiltered);
+
+    // Finally, sort player list by points calculated from league settings (descending)
     const leagueSettings = activeLeague ? activeLeague.settings : null;
     const sortedPlayerList = _sortBy(
-      playerList,
+      searchInputFiltered,
       player =>
         this.getSeasonPointTotal(_get(player, "season_stats"), leagueSettings) *
         -1
     );
 
-    if (!this.state.filterInput) {
-      return sortedPlayerList;
-    }
+    return sortedPlayerList;
+  };
 
+  filterDataByHasTeam = playerList => {
+    return _filter(playerList, player => {
+      return !!_get(player, "team_id");
+    });
+  };
+
+  filterDataByGamesPlayed = playerList => {
+    return _filter(playerList, player => {
+      // return !_get(this.props.currentDetails, 'teams_played', []).includes(_get(player, "team_id"));
+      const teamsToPlay =
+        _get(this.props.currentDetails, "teams_to_play") || [];
+      return teamsToPlay.includes(_get(player, "team_id"));
+    });
+  };
+
+  filterDataBySearchInput = playerList => {
+    if (!this.state.filterInput) {
+      return playerList;
+    }
     const lowerCaseFilterInput = this.state.filterInput.toLowerCase();
-    return _filter(sortedPlayerList, player => {
+    return _filter(playerList, player => {
       const fullNameLowerCase = `${player.first_name.toLowerCase()} ${player.last_name.toLowerCase()}`;
       return fullNameLowerCase.includes(lowerCaseFilterInput);
     });

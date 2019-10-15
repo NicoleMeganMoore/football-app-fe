@@ -37,6 +37,14 @@ export const PLAYERS_QUERY = gql`
         fumble
         reception
       }
+      game {
+        startTime
+        endedTime
+        homeTeam
+        awayTeam
+        homeScore
+        awayScore
+      }
     }
   }
 `;
@@ -134,6 +142,8 @@ export const USER_QUERY = gql`
       current_week
       is_draft_day
       next_draft_day
+      teams_played
+      teams_to_play
     }
   }
 `;

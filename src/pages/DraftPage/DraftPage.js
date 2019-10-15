@@ -69,6 +69,7 @@ class DraftPage extends Component {
     const firstPlayer = _get(data, "league.draftStatus.firstPlayer");
     const activePlayer = _get(data, "league.draftStatus.activePlayer");
     const league = _get(data, "league");
+    const currentDetails = _get(user, "currentDetails");
 
     if (!firstPlayer) {
       return <div>Determine first player!</div>;
@@ -102,10 +103,6 @@ class DraftPage extends Component {
         </Mutation>
       );
     } else if (activePlayer) {
-      const activePlayerNameText =
-        activePlayer.email === _get(user, "user.email")
-          ? "You are"
-          : `${activePlayer.first_name} ${activePlayer.last_name} is`;
       return (
         <div>
           <div className="draft-top-container">
@@ -153,6 +150,7 @@ class DraftPage extends Component {
           <PlayerList
             leagueId={this.props.params.leagueId}
             onRowClick={id => this.setState({ activePlayerId: id })}
+            currentDetails={currentDetails}
           />
           {this.renderTeams()}
         </div>

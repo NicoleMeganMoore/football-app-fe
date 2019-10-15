@@ -30,6 +30,7 @@ class DashboardPage extends Component {
             nextDraftDay={nextDraftDay}
             loading={loading}
             refetch={refetch}
+            currentDetails={_get(data, "currentDetails")}
           />
         );
       });

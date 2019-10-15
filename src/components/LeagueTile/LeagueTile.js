@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from "react";
-import _find from "lodash/find";
 import { Mutation } from "react-apollo";
 import ReactMomentCountDown from "react-moment-countdown";
 import moment from "moment";
+import _find from "lodash/find";
+import _get from "lodash/get";
 
 import { history } from "../../App";
 
@@ -49,6 +50,9 @@ class LeagueTile extends Component {
       week: this.props.currentWeek
     });
 
+    const teamsToPlay = _get(this.props.currentDetails, "teams_to_play") || [];
+    const canDraft = teamsToPlay.length >= 2;
+
     let content = null;
     let expandedContent = null;
     let subheader = league.opponent;
@@ -60,7 +64,7 @@ class LeagueTile extends Component {
       expandedContent = <ExpandedContent league={league} />;
     } else if (this.props.loading) {
       content = <CircularProgress />;
-    } else if (!hasActiveMatch && this.props.isDraftDay) {
+    } else if (!hasActiveMatch && canDraft) {
       content = <DraftDayContent league={league} />;
     } else if (!hasActiveMatch && !this.props.isDraftDay) {
       content = (
@@ -69,7 +73,6 @@ class LeagueTile extends Component {
           refetch={this.props.refetch}
         />
       );
-      content = <DraftDayContent league={league} />;
     }
     expandedContent = <ExpandedContent league={league} />;
 
