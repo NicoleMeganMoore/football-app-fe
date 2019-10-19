@@ -14,7 +14,11 @@ export default ComposedComponent => {
     componentDidMount = () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        this.props.history.push("/login");
+        try {
+          this.props.history.push("/login");
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
 

@@ -4,18 +4,27 @@ import { Mutation, Query } from "react-apollo";
 import _get from "lodash/get";
 import _find from "lodash/find";
 import CountDown from "react-countdown-now";
-import Paper from "@material-ui/core/Paper";
-import Avatar from "@material-ui/core/Avatar";
+import ReactTable from "react-table";
 
 // Material UI
+import Paper from "@material-ui/core/Paper";
+import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import { CircularProgress } from "@material-ui/core";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
 import { LEAGUE_QUERY, USER_QUERY, PLAYERS_QUERY } from "../../graphql/queries";
 import { START_DRAFT_MUTATION } from "../../graphql/mutations";
 import { DRAFT_UPDATED_SUBSCRIPTION } from "../../graphql/subscriptions";
 import placeholderImage from "../../images/img-placeholder.jpg";
 import { positionNames } from "../../js/constants";
+import { getSeasonPointTotal } from "../../js/util";
+import ScrollContainer from "../../containers/ScrollContainer";
+import { Scrollbars } from "react-custom-scrollbars";
 
 import { PlayerList } from "../../components/PlayerList";
 
@@ -29,7 +38,74 @@ class DraftPage extends Component {
   };
   componentDidMount = () => {};
 
-  renderActivePlayerSummary = playerId => {
+  renderPlayerStatsTable = (player, leagueSettings) => {
+    const stats = _get(player, "season_stats");
+
+    return (
+      <Paper className="player-stats-table">
+        <ScrollContainer style={{ height: "68px" }}>
+          <Table aria-label="simple table" size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Team</TableCell>
+                <TableCell align="center">Fan Pts</TableCell>
+                <TableCell align="center">Pass Yds</TableCell>
+                <TableCell align="center">Pass TD</TableCell>
+                <TableCell align="center">Int</TableCell>
+                <TableCell align="center">Rush Yds</TableCell>
+                <TableCell align="center">Rush TD</TableCell>
+                <TableCell align="center">Rec</TableCell>
+                <TableCell align="center">Rec Yds</TableCell>
+                <TableCell align="center">Rec TD</TableCell>
+                <TableCell align="center">Ret TD</TableCell>
+                <TableCell align="center">2-PT</TableCell>
+                <TableCell align="center">Fum</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow key="season-stats-row">
+                <TableCell component="th" scope="row">
+                  {player.team_abbrv}
+                </TableCell>
+                <TableCell align="center">
+                  {getSeasonPointTotal(stats, leagueSettings)}
+                </TableCell>
+                <TableCell align="center">
+                  {_get(stats, "passing_yd")}
+                </TableCell>
+                <TableCell align="center">
+                  {_get(stats, "passing_td")}
+                </TableCell>
+                <TableCell align="center">
+                  {_get(stats, "passing_int")}
+                </TableCell>
+                <TableCell align="center">
+                  {_get(stats, "rushing_yd")}
+                </TableCell>
+                <TableCell align="center">
+                  {_get(stats, "rushing_td")}
+                </TableCell>
+                <TableCell align="center">{_get(stats, "reception")}</TableCell>
+                <TableCell align="center">
+                  {_get(stats, "receiving_yd")}
+                </TableCell>
+                <TableCell align="center">
+                  {_get(stats, "receiving_td")}
+                </TableCell>
+                <TableCell align="center">{_get(stats, "return_td")}</TableCell>
+                <TableCell align="center">
+                  {_get(stats, "two_pt_made")}
+                </TableCell>
+                <TableCell align="center">{_get(stats, "fumble")}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </ScrollContainer>
+      </Paper>
+    );
+  };
+
+  renderActivePlayerSummary = (playerId, leagueSettings) => {
     return (
       <Query query={PLAYERS_QUERY}>
         {({ loading, data, error }) => {
@@ -44,12 +120,24 @@ class DraftPage extends Component {
                 src={activePlayer.image_url || placeholderImage}
                 className="summary-player-avatar"
               />
-              <div style={{ marginLeft: "20px" }}>
+              <div className="summary-player-stats-container">
                 <div className="summary-player-name">
                   {activePlayer.first_name} {activePlayer.last_name}
+                  <div className="summary-player-desc">
+                    | {activePlayer.position}
+                  </div>
+                  <Button
+                    color="primary"
+                    size="small"
+                    variant="contained"
+                    className="draft-player-btn"
+                    onClick={() => console.log(activePlayer.id)}
+                  >
+                    Draft
+                  </Button>
                 </div>
-                <div className="summary-player-desc">
-                  {positionNames[activePlayer.position]}
+                <div>
+                  {this.renderPlayerStatsTable(activePlayer, leagueSettings)}
                 </div>
               </div>
             </div>
@@ -138,7 +226,10 @@ class DraftPage extends Component {
             <div className="draft-top-right-container">
               <div className="selected-player-details">
                 {this.state.activePlayerId ? (
-                  this.renderActivePlayerSummary(this.state.activePlayerId)
+                  this.renderActivePlayerSummary(
+                    this.state.activePlayerId,
+                    _get(league, "settings")
+                  )
                 ) : (
                   <div className="active-player-placeholder">
                     Select a player to see more stats

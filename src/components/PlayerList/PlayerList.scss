@@ -25,6 +25,11 @@
       background: rgba(0, 0, 0, 0.02);
     }
   }
+
+  .active-player .rt-td {
+    background: #3eb56f;
+    color: white;
+  }
 }
 
 .player-search-input-container {

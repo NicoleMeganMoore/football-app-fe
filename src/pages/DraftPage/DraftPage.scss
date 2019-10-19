@@ -18,7 +18,7 @@
   }
   .draft-top-right-container {
     width: 100%;
-    padding-bottom: 20px;
+    // padding-bottom: 20px;
   }
   .round-text-container {
     margin-bottom: 30px;
@@ -28,6 +28,8 @@
   }
   .summary-container {
     display: flex;
+    flex-direction: row;
+    height: 100%;
   }
 }
 
@@ -37,21 +39,32 @@
   color: rgba(0, 0, 0, 0.25);
 }
 
+.draft-player-btn {
+  float: right;
+  width: 100px !important;
+}
+
 .summary-player-avatar {
-  width: 110px !important;
   height: 110px !important;
+  flex: 0 0 110px !important;
   margin-left: 25px;
+  border: 8px solid rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .summary-player-name {
   margin-top: 8px;
   font-size: 30px;
+  white-space: nowrap;
 }
 
 .summary-player-desc {
+  display: inline-block;
+  margin-left: 10px;
   color: rgba(0, 0, 0, 0.5);
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: 21px;
+  vertical-align: bottom;
+  line-height: 34px;
 }
 
 .selected-player-details {
@@ -64,4 +77,36 @@
   height: 500px;
   padding: 20px;
   box-sizing: border-box;
+}
+
+.summary-player-stats-container {
+  flex: 1 1 auto;
+  width: 1px;
+  overflow: visible;
+  margin-left: 20px;
+}
+
+.player-stats-table {
+  // overflow: auto;
+  margin-top: 8px;
+  height: 100%;
+
+  .MuiTableCell-head,
+  .MuiTableCell-root {
+    font-size: 12px;
+    line-height: 12px;
+  }
+
+  .MuiTableCell-sizeSmall {
+    padding: 6px 14px 6px 14px;
+  }
+
+  .MuiTableCell-head {
+    height: 36px !important;
+    box-sizing: border-box;
+  }
+  .MuiTableCell-body {
+    height: 32px;
+    box-sizing: border-box;
+  }
 }

@@ -1,0 +1,9 @@
+.custom-scrollbar {
+  .thumb-horizontal {
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  &:hover .thumb-horizontal {
+    opacity: 1;
+  }
+}
