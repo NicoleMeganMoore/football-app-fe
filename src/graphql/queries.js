@@ -56,6 +56,7 @@ export const LEAGUE_QUERY = gql`
       id
       league_name
       user_list {
+        _id
         id
         first_name
         last_name
@@ -65,6 +66,7 @@ export const LEAGUE_QUERY = gql`
       draftStatus {
         draftInProgress
         firstPlayer {
+          _id
           id
           first_name
           last_name
@@ -73,12 +75,14 @@ export const LEAGUE_QUERY = gql`
         nextTurn
         roundNumber
         activePlayer {
+          _id
           id
           first_name
           last_name
           email
         }
         readyToDraft {
+          _id
           id
           email
           first_name
@@ -105,24 +109,49 @@ export const LEAGUE_QUERY = gql`
 export const USER_QUERY = gql`
   query {
     user {
+      _id
       id
       first_name
       last_name
       email
       leagues {
+        _id
         id
         league_name
         user_list {
+          _id
           id
           first_name
           last_name
           email
         }
-        matches {
-          id
-          week
-        }
         opponent
+        draftStatus {
+          draftInProgress
+          firstPlayer {
+            _id
+            id
+            first_name
+            last_name
+            email
+          }
+          nextTurn
+          roundNumber
+          activePlayer {
+            _id
+            id
+            first_name
+            last_name
+            email
+          }
+          readyToDraft {
+            _id
+            id
+            email
+            first_name
+            last_name
+          }
+        }
         settings {
           pts_per_passing_yd
           pts_per_passing_td

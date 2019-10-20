@@ -39,7 +39,10 @@ class LeagueInvitePage extends Component {
       );
     }
     return (
-      <Mutation mutation={ACCEPT_LEAGUE_INVITATION_MUTATION}>
+      <Mutation
+        mutation={ACCEPT_LEAGUE_INVITATION_MUTATION}
+        refetchQueries={() => [{ query: USER_QUERY }]}
+      >
         {mutate => (
           <div>
             <h1>
@@ -53,6 +56,7 @@ class LeagueInvitePage extends Component {
                         leagueId: Number(_get(this.props.params, "leagueId"))
                       }
                     });
+
                     history.push("/dashboard");
                   } catch (error) {
                     this.setState({ leagueAcceptError: error });

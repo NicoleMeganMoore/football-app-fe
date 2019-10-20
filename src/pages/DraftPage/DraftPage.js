@@ -167,7 +167,7 @@ class DraftPage extends Component {
     const currentDetails = _get(user, "currentDetails");
 
     if (!firstPlayer) {
-      return <div>Determine first player!</div>;
+      return <div>Determining first player!</div>;
     }
     if (firstPlayer && !activePlayer) {
       return (

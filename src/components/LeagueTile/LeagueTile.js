@@ -110,7 +110,7 @@ class LeagueTile extends Component {
         />
       );
     }
-    expandedContent = <ExpandedContent league={league} />;
+    // expandedContent = <ExpandedContent league={league} />;
 
     return (
       <Card className="league-tile" key={`league-tile-${league.id}`}>
@@ -280,6 +280,7 @@ export const InvitationPendingContent = ({ league }) => {
               {mutate => (
                 <Button
                   color="default"
+                  className="resend-invitation-btn"
                   onClick={() => mutate({ variables: { leagueId: league.id } })}
                 >
                   Resend Invitation

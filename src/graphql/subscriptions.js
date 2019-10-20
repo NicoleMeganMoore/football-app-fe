@@ -7,6 +7,7 @@ export const DRAFT_UPDATED_SUBSCRIPTION = gql`
       id
       league_name
       user_list {
+        _id
         id
         first_name
         last_name
@@ -16,6 +17,7 @@ export const DRAFT_UPDATED_SUBSCRIPTION = gql`
       draftStatus {
         draftInProgress
         firstPlayer {
+          _id
           id
           first_name
           last_name
@@ -24,12 +26,14 @@ export const DRAFT_UPDATED_SUBSCRIPTION = gql`
         nextTurn
         roundNumber
         activePlayer {
+          _id
           id
           first_name
           last_name
           email
         }
         readyToDraft {
+          _id
           id
           email
           first_name
