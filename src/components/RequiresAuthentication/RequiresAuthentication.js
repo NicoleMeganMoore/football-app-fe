@@ -1,5 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import { history } from "../../App";
+import { getTokens } from "../../redux/rootReducer";
 
 export default ComposedComponent => {
   class Authentication extends Component {
@@ -12,10 +16,10 @@ export default ComposedComponent => {
     };
 
     componentDidMount = () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
+      const { accessToken } = this.props.tokens;
+      if (!accessToken) {
         try {
-          this.props.history.push("/login");
+          history.push("/login");
         } catch (error) {
           console.log(error);
         }
@@ -26,5 +30,13 @@ export default ComposedComponent => {
       return <ComposedComponent {...this.props} />;
     };
   }
-  return Authentication;
+
+  const mapStateToProps = state => ({
+    tokens: getTokens(state)
+  });
+
+  return connect(
+    mapStateToProps,
+    {}
+  )(Authentication);
 };

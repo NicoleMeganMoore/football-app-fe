@@ -5,7 +5,9 @@ import { Query } from "react-apollo";
 import { connect } from "react-redux";
 import _get from "lodash/get";
 
+// import { store } from "../../App";
 import { getLocation } from "../../redux/rootReducer";
+import { signOutUser } from "../../redux/modules/authentication";
 import { PLAYERS_QUERY, USER_QUERY } from "../../graphql/queries";
 import draftWarsLogoSVG from "../../images/draftwars-logo.svg";
 import apolloClient from "../../graphql/apolloClient";
@@ -24,8 +26,7 @@ class MainNavigation extends Component {
   };
 
   signOutUser = () => {
-    localStorage.setItem("accessToken", "");
-    localStorage.setItem("refreshToken", "");
+    this.props.signOutUser();
     history.push("/login");
   };
 
@@ -185,5 +186,7 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {}
+  {
+    signOutUser
+  }
 )(MainNavigation);

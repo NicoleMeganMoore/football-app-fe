@@ -8,6 +8,8 @@ import { setContext } from "apollo-link-context";
 import { getMainDefinition } from "apollo-utilities";
 import { execute } from "apollo-link";
 import { refreshTokenRequest } from "./refreshToken";
+import { store } from "../redux/store";
+import { getTokens } from "../redux/rootReducer";
 import gql from "graphql-tag";
 import _find from "lodash/find";
 import _get from "lodash/get";
@@ -31,7 +33,8 @@ const errorLink = onError(
       graphQLErrors &&
       _find(graphQLErrors, error => error.message === "UNAUTHENTICATED")
     ) {
-      const refreshToken = localStorage.getItem("refreshToken");
+      const state = store.getState();
+      const { refreshToken } = getTokens(state);
       if (refreshToken) {
         return promiseToObservable(refreshTokenRequest(refreshToken)).flatMap(
           () => forward(operation)
@@ -42,7 +45,12 @@ const errorLink = onError(
 );
 
 const getAuthToken = () => {
-  return localStorage.getItem("accessToken");
+  if (store) {
+    const state = store.getState();
+    const { accessToken } = getTokens(state);
+    return accessToken;
+  }
+  return null;
 };
 
 const wsLink = new WebSocketLink({
@@ -81,7 +89,8 @@ const link = split(
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const accessToken = localStorage.getItem("accessToken");
+  const state = store.getState();
+  const { accessToken } = getTokens(state);
   // return the headers to the context so httpLink can read them
   return {
     headers: {

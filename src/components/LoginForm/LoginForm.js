@@ -8,13 +8,14 @@ import gql from "graphql-tag";
 import _get from "lodash/get";
 
 import { history } from "../../App";
+import { store } from "../../redux/store";
 
 import { MdPerson, MdLock } from "react-icons/md";
 import { GiAmericanFootballHelmet } from "react-icons/gi";
 
 // REDUX ----------------------------------------------------------------------
 // import { connect } from "react-redux";
-// import { signInUser, signOutUser } from "../../redux/modules/authentication";
+import { SET_TOKENS } from "../../redux/modules/authentication";
 // import {
 //   navigateToDashboard,
 //   navigateToRegister
@@ -100,18 +101,15 @@ class LoginForm extends Component {
         }
       });
 
-      localStorage.setItem(
-        "accessToken",
-        _get(response, "data.login.tokens.accessToken")
-      );
-      localStorage.setItem(
-        "refreshToken",
-        _get(response, "data.login.tokens.refreshToken")
-      );
+      store.dispatch({
+        type: SET_TOKENS,
+        payload: _get(response, "data.login.tokens")
+      });
 
       this.setState({ isSigningIn: false });
       history.push("/dashboard");
     } catch (err) {
+      console.log(err);
       this.setState({
         isSigningIn: false,
         loginError: _get(err, "graphQLErrors[0].message")

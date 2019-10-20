@@ -1,4 +1,5 @@
 import { REHYDRATE } from "redux-persist";
+import * as fromRoot from "../rootReducer";
 
 import _get from "lodash/get";
 
@@ -20,10 +21,11 @@ export const REFRESH_TOKEN_FAILURE = "REFRESH_TOKEN_FAILURE";
 
 export const SIGN_OUT_USER = "SIGN_OUT_USER";
 
-export const CLEAR_TOKEN = "CLEAR_TOKEN";
+export const SET_TOKENS = "SET_TOKENS";
+export const CLEAR_TOKENS = "CLEAR_TOKENS";
 
-export const clearToken = () => dispatch => {
-  dispatch({ type: CLEAR_TOKEN });
+export const clearTokens = () => dispatch => {
+  dispatch({ type: CLEAR_TOKENS });
 };
 
 export const signInUser = (email, password) => async dispatch => {
@@ -54,10 +56,11 @@ export const signInUser = (email, password) => async dispatch => {
   }
 };
 
-export const refreshToken = () => async dispatch => {
+export const refreshToken = () => async (dispatch, getState) => {
   dispatch({ type: REFRESH_TOKEN });
 
-  const refreshToken = localStorage.getItem("refreshToken");
+  const state = getState();
+  const { refreshToken } = fromRoot.getTokens(state);
 
   const query = `
     query {
@@ -74,14 +77,7 @@ export const refreshToken = () => async dispatch => {
 
   return graphqlRequest(query)
     .then(response => {
-      localStorage.setItem(
-        "accessToken",
-        _get(response, "token.tokens.accessToken")
-      );
-      localStorage.setItem(
-        "refreshToken",
-        _get(response, "token.tokens.refreshToken")
-      );
+      dispatch({ type: SET_TOKENS, payload: _get(response, "token.tokens") });
       return Promise.resolve();
     })
     .catch(err => {
@@ -92,7 +88,7 @@ export const refreshToken = () => async dispatch => {
 
 export const signOutUser = () => (dispatch, getState) => {
   dispatch({ type: SIGN_OUT_USER });
-  dispatch(clearToken());
+  dispatch(clearTokens());
   dispatch(navigateToLogin());
 };
 
@@ -165,6 +161,14 @@ export default (state = defaultState, action) => {
       };
     }
 
+    case SET_TOKENS: {
+      return {
+        ...state,
+        tokens: action.payload,
+        isAuthenticated: true
+      };
+    }
+
     case REFRESH_TOKEN_SUCCESS: {
       const tokenData = action.payload;
       return {
@@ -212,10 +216,10 @@ export default (state = defaultState, action) => {
       };
     }
 
-    case CLEAR_TOKEN: {
+    case CLEAR_TOKENS: {
       return {
         ...state,
-        token: null
+        tokens: {}
       };
     }
 

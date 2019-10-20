@@ -1,6 +1,9 @@
 import { graphqlRequest } from "../js/graphqlService";
 import { history } from "../App";
 import _get from "lodash/get";
+import { store } from "../redux/store";
+
+import { SET_TOKENS } from "../redux/modules/authentication";
 
 export const refreshTokenRequest = refreshToken => {
   const query = `
@@ -18,14 +21,10 @@ export const refreshTokenRequest = refreshToken => {
 
   return graphqlRequest(query)
     .then(response => {
-      localStorage.setItem(
-        "accessToken",
-        _get(response, "token.tokens.accessToken")
-      );
-      localStorage.setItem(
-        "refreshToken",
-        _get(response, "token.tokens.refreshToken")
-      );
+      store.dispatch({
+        type: SET_TOKENS,
+        payload: _get(response, "token.tokens")
+      });
       return Promise.resolve();
     })
     .catch(err => {

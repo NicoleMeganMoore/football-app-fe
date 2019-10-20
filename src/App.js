@@ -2,7 +2,8 @@ import React, { Component } from "react";
 // import PropTypes from "prop-types";
 
 import { Provider } from "react-redux";
-import { configureStore } from "./redux/modules/store";
+// import { configureStore } from "./redux/modules/store";
+import { store, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/lib/integration/react";
 
 import { ApolloProvider } from "react-apollo";
@@ -25,12 +26,6 @@ import CoreLayout from "./layouts/CoreLayout/CoreLayout";
 import apolloClient from "./graphql/apolloClient";
 
 import "./App.scss";
-
-const initialState = window.__INITIAL_STATE__;
-export const { store, persistor } = configureStore(
-  initialState,
-  browserHistory
-);
 
 export const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: state => state.router

@@ -2,7 +2,8 @@ import axios from "axios";
 import _get from "lodash/get";
 
 import { refreshToken, signOutUser } from "../redux/modules/authentication";
-import { store } from "../App";
+import { store } from "../redux/store";
+import { getTokens } from "../redux/rootReducer";
 
 const GENERAL_ERROR_MESSAGE = "Something went wrong, please try again.";
 
@@ -23,7 +24,8 @@ const retryOnTokenExpiry = axiosInstance => {
       return store
         .dispatch(refreshToken())
         .then(() => {
-          const accessToken = localStorage.getItem("accessToken");
+          const state = store.getState();
+          const { accessToken } = getTokens(state);
           const retryConfig = {
             ...config,
             headers: {
@@ -54,12 +56,13 @@ const retryOnTokenExpiry = axiosInstance => {
 };
 
 export const graphqlRequest = async query => {
-  const token = localStorage.getItem("accessToken");
+  const state = store.getState();
+  const { accessToken } = getTokens(state);
   const axiosInstance = axios.create({
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : undefined
+      Authorization: accessToken ? `Bearer ${accessToken}` : undefined
     }
   });
 

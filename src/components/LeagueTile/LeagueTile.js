@@ -27,7 +27,8 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import { USER_QUERY } from "../../graphql/queries";
 import {
   CANCEL_LEAGUE_INVITATION_MUTATION,
-  READY_TO_DRAFT_MUTATION
+  READY_TO_DRAFT_MUTATION,
+  RESEND_INVITATION_MUTATION
 } from "../../graphql/mutations";
 
 import "./LeagueTile.scss";
@@ -36,6 +37,41 @@ class LeagueTile extends Component {
   state = {
     expanded: false,
     isSettingsOpen: false
+  };
+
+  renderDraftDayContent = league => {
+    return (
+      <div className="league-tile-center-content">
+        <Typography variant="body2" color="textSecondary" component="p">
+          {
+            // <div>It's draft day! Get it.</div>
+          }
+          <Mutation mutation={READY_TO_DRAFT_MUTATION}>
+            {mutate => (
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={async () => {
+                  try {
+                    await mutate({
+                      variables: { leagueId: Number(league.id) }
+                    });
+                    history.push(`/draft/${league.id}`);
+                  } catch (error) {
+                    this.setState({ readyToDraftError: error });
+                  }
+                }}
+                // className={classes.button}
+                // startIcon={<CloudUploadIcon />}
+              >
+                Draft Now!
+              </Button>
+            )}
+          </Mutation>
+        </Typography>
+      </div>
+    );
   };
 
   render = () => {
@@ -65,7 +101,7 @@ class LeagueTile extends Component {
     } else if (this.props.loading) {
       content = <CircularProgress />;
     } else if (!hasActiveMatch && canDraft) {
-      content = <DraftDayContent league={league} />;
+      content = this.renderDraftDayContent(league);
     } else if (!hasActiveMatch && !this.props.isDraftDay) {
       content = (
         <DraftCountdownContent
@@ -230,39 +266,6 @@ export const DraftCountdownContent = ({ nextDraftDay, refetch }) => {
   );
 };
 
-export const DraftDayContent = ({ league }) => {
-  return (
-    <div className="league-tile-center-content">
-      <Typography variant="body2" color="textSecondary" component="p">
-        {
-          // <div>It's draft day! Get it.</div>
-        }
-        <Mutation mutation={READY_TO_DRAFT_MUTATION}>
-          {mutate => (
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={async () => {
-                try {
-                  await mutate({ variables: { leagueId: Number(league.id) } });
-                  history.push(`/draft/${league.id}`);
-                } catch (error) {
-                  this.setState({ readyToDraftError: error });
-                }
-              }}
-              // className={classes.button}
-              // startIcon={<CloudUploadIcon />}
-            >
-              Draft Now!
-            </Button>
-          )}
-        </Mutation>
-      </Typography>
-    </div>
-  );
-};
-
 export const InvitationPendingContent = ({ league }) => {
   return (
     <Mutation
@@ -273,7 +276,18 @@ export const InvitationPendingContent = ({ league }) => {
         <Fragment>
           <div className="league-tile-center-content translucent">
             Invitation sent to <strong>{league.opponent}</strong>
+            <Mutation mutation={RESEND_INVITATION_MUTATION}>
+              {mutate => (
+                <Button
+                  color="default"
+                  onClick={() => mutate({ variables: { leagueId: league.id } })}
+                >
+                  Resend Invitation
+                </Button>
+              )}
+            </Mutation>
           </div>
+
           <br />
           {
             // <button className="draftwars-btn">Edit Settings</button>

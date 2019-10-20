@@ -18,7 +18,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
 import { LEAGUE_QUERY, USER_QUERY, PLAYERS_QUERY } from "../../graphql/queries";
-import { START_DRAFT_MUTATION } from "../../graphql/mutations";
+import {
+  START_DRAFT_MUTATION,
+  DRAFT_PLAYER_MUTATION
+} from "../../graphql/mutations";
 import { DRAFT_UPDATED_SUBSCRIPTION } from "../../graphql/subscriptions";
 import placeholderImage from "../../images/img-placeholder.jpg";
 import { positionNames } from "../../js/constants";
@@ -126,15 +129,19 @@ class DraftPage extends Component {
                   <div className="summary-player-desc">
                     | {activePlayer.position}
                   </div>
-                  <Button
-                    color="primary"
-                    size="small"
-                    variant="contained"
-                    className="draft-player-btn"
-                    onClick={() => console.log(activePlayer.id)}
-                  >
-                    Draft
-                  </Button>
+                  <Mutation mutation={DRAFT_PLAYER_MUTATION}>
+                    {mutate => (
+                      <Button
+                        color="primary"
+                        size="small"
+                        variant="contained"
+                        className="draft-player-btn"
+                        onClick={() => console.log(activePlayer.id)}
+                      >
+                        Draft
+                      </Button>
+                    )}
+                  </Mutation>
                 </div>
                 <div>
                   {this.renderPlayerStatsTable(activePlayer, leagueSettings)}
@@ -312,6 +319,7 @@ class DraftPage extends Component {
                   }
                 }
               });
+              console.log(props);
               return (
                 <div>
                   {this.renderDraftContent({
